@@ -70,7 +70,7 @@ public class GlossaryHandler {
             graph = assetContext;
             boolean glossary = getGlossary(userID, assetGuid, entityDetail.getType().getTypeDefName());
 
-            if (!glossary) {
+            if (glossary) {
                 log.error("No Semantic assignment for the asset with guid {} found", assetGuid);
                 return Collections.emptyMap();
             }
@@ -142,5 +142,14 @@ public class GlossaryHandler {
         return entityDetails.isEmpty();
     }
 
+    public Map<String, Set<Edge>>  getGlossaryFromProxy(Relationship relationship,String serviceOperationName) throws InvalidParameterException,
+                                                                                                                      PropertyServerException,
+                                                                                                                      UserNotAuthorizedException {
+           boolean glossaryContextEmpty = addSemanticAssignmentToContext(serviceOperationName,relationship);
+           if(!glossaryContextEmpty){
+               return graph.getNeighbors();
+           }
+            return Collections.emptyMap();
+    }
 }
 

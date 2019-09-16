@@ -180,8 +180,7 @@ public class GraphBuilder {
         if (relationshipType.equals(SEMANTIC_ASSIGNMENT)) {
 
 //            createEntitiesSemanticAssignment(event);
-        }
-        else {
+        } else {
 
             GraphTraversalSource g = bufferGraph.traversal();
 
@@ -202,102 +201,103 @@ public class GraphBuilder {
                         errorCode.getSystemAction(),
                         errorCode.getUserAction());
             }
-
-
-            String entityOneGUID = event.getProxies().get(entityProxyOne).getGUID();
-            String entityTwoGUID = event.getProxies().get(entityProxyTwo).getGUID();
-
-            String entityOneType = event.getProxies().get(entityProxyOne).getTypeDefName();
-            String entityTwoType = event.getProxies().get(entityProxyTwo).getTypeDefName();
-
-            Vertex vertexOne = null;
-            Vertex vertexTwo = null;
-
-            Iterator<Vertex> vi = g.V().hasLabel(entityOneType).has(PROPERTY_KEY_ENTITY_GUID, entityOneGUID);
-            if (vi.hasNext()) {
-                vertexOne = vi.next();
-                log.debug("{} found entityOne vertex {}", methodName, vertexOne);
-            }
-
-            vi = g.V().hasLabel(entityTwoType).has(PROPERTY_KEY_ENTITY_GUID, entityTwoGUID);
-            if (vi.hasNext()) {
-                vertexTwo = vi.next();
-                log.debug("{} found entityTwo vertex {}", methodName, vertexTwo);
-            }
-
-            //Events coming asynchronously so entities must be created if do not exist
-            if (vertexOne == null) {
-                vertexOne = createEntityProxy(event.getProxies().get(entityProxyOne));
-
-            }
-
-            if (vertexTwo == null) {
-                vertexTwo = createEntityProxy(event.getProxies().get(entityProxyTwo));
-
-            }
-
-
-            Edge edge = vertexOne.addEdge(relationshipType, vertexTwo);
-
-            try {
-
-                graphRelationshipMapper.mapRelationshipToEdge(event, edge);
-
-            } catch (Exception e) {
-                log.error("{} Caught exception from relationship mapper {}", methodName, e.getMessage());
-                g.tx().rollback();
-                OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_NOT_CREATED;
-
-                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
-                        this.getClass().getName());
-
-                throw new OpenLineageException(400,
-                        this.getClass().getName(),
-                        methodName,
-                        errorMessage,
-                        errorCode.getSystemAction(),
-                        errorCode.getUserAction());
-            }
-
-            log.debug("{} Commit tx containing creation of edge", methodName);
-            g.tx().commit();
         }
 
+//            String entityOneGUID = event.getProxies().get(entityProxyOne).getGUID();
+//            String entityTwoGUID = event.getProxies().get(entityProxyTwo).getGUID();
+//
+//            String entityOneType = event.getProxies().get(entityProxyOne).getTypeDefName();
+//            String entityTwoType = event.getProxies().get(entityProxyTwo).getTypeDefName();
+//
+//            Vertex vertexOne = null;
+//            Vertex vertexTwo = null;
+//
+//            Iterator<Vertex> vi = g.V().hasLabel(entityOneType).has(PROPERTY_KEY_ENTITY_GUID, entityOneGUID);
+//            if (vi.hasNext()) {
+//                vertexOne = vi.next();
+//                log.debug("{} found entityOne vertex {}", methodName, vertexOne);
+//            }
+//
+//            vi = g.V().hasLabel(entityTwoType).has(PROPERTY_KEY_ENTITY_GUID, entityTwoGUID);
+//            if (vi.hasNext()) {
+//                vertexTwo = vi.next();
+//                log.debug("{} found entityTwo vertex {}", methodName, vertexTwo);
+//            }
+//
+//            //Events coming asynchronously so entities must be created if do not exist
+//            if (vertexOne == null) {
+//                vertexOne = createEntityProxy(event.getProxies().get(entityProxyOne));
+//
+//            }
+//
+//            if (vertexTwo == null) {
+//                vertexTwo = createEntityProxy(event.getProxies().get(entityProxyTwo));
+//
+//            }
+
+
+//            Edge edge = vertexOne.addEdge(relationshipType, vertexTwo);
+//
+//            try {
+//
+//                graphRelationshipMapper.mapRelationshipToEdge(event, edge);
+//
+//            } catch (Exception e) {
+//                log.error("{} Caught exception from relationship mapper {}", methodName, e.getMessage());
+//                g.tx().rollback();
+//                OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_NOT_CREATED;
+//
+//                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
+//                        this.getClass().getName());
+//
+//                throw new OpenLineageException(400,
+//                        this.getClass().getName(),
+//                        methodName,
+//                        errorMessage,
+//                        errorCode.getSystemAction(),
+//                        errorCode.getUserAction());
+//            }
+//
+//            log.debug("{} Commit tx containing creation of edge", methodName);
+//            g.tx().commit();
+//        }
+//
+//    }
+
     }
-
-    private Vertex createEntityProxy(AssetLineageEntityEvent entityProxy) {
-
-        final String methodName = "createEntityProxy";
-        final String typeDefName = entityProxy.getTypeDefName();
-        GraphTraversalSource g = bufferGraph.traversal();
-
-        Vertex vertex = g.addV(typeDefName).next();
-
-        try {
-            vertex.property(PROPERTY_KEY_PROXY,true);
-            graphEntityMapper.mapEntityToVertex(entityProxy, vertex);
-
-
-        } catch (Exception e) {
-            log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
-            g.tx().rollback();
-
-            OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
-
-            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entityProxy.getGUID(), methodName,
-                    this.getClass().getName());
-
-            throw new OpenLineageException(400,
-                    this.getClass().getName(),
-                    methodName,
-                    errorMessage,
-                    errorCode.getSystemAction(),
-                    errorCode.getUserAction());
-        }
-
-        g.tx().commit();
-        return vertex;
-    }
+//    private Vertex createEntityProxy(AssetLineageEntityEvent entityProxy) {
+//
+//        final String methodName = "createEntityProxy";
+//        final String typeDefName = entityProxy.getTypeDefName();
+//        GraphTraversalSource g = bufferGraph.traversal();
+//
+//        Vertex vertex = g.addV(typeDefName).next();
+//
+//        try {
+//            vertex.property(PROPERTY_KEY_PROXY,true);
+//            graphEntityMapper.mapEntityToVertex(entityProxy, vertex);
+//
+//
+//        } catch (Exception e) {
+//            log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
+//            g.tx().rollback();
+//
+//            OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
+//
+//            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entityProxy.getGUID(), methodName,
+//                    this.getClass().getName());
+//
+//            throw new OpenLineageException(400,
+//                    this.getClass().getName(),
+//                    methodName,
+//                    errorMessage,
+//                    errorCode.getSystemAction(),
+//                    errorCode.getUserAction());
+//        }
+//
+//        g.tx().commit();
+//        return vertex;
+//    }
 
 //    private void createEntitiesSemanticAssignment(RelationshipEvent event) {
 //
@@ -319,150 +319,151 @@ public class GraphBuilder {
 //
 //    }
 
-    private void createGlossaryVertex(GlossaryTerm term, JanusGraph graph) {
-        GraphTraversalSource g = graph.traversal();
+//    private void createGlossaryVertex(GlossaryTerm term, JanusGraph graph) {
+//        GraphTraversalSource g = graph.traversal();
+//
+//        Iterator<Vertex> vertexIt = g.V().hasLabel(term.getType()).has(PROPERTY_KEY_ENTITY_GUID, term.getGuid());
+//        if (!vertexIt.hasNext()) {
+//
+//            Vertex v = g.addV(term.getType()).next();
+//            v.property(PROPERTY_KEY_NAME_QUALIFIED_NAME, term.getQualifiedName());
+//            v.property(PROPERTY_KEY_ENTITY_GUID, term.getGuid());
+//            v.property(PROPERTY_KEY_ENTITY_NAME, term.getDisplayName());
+//            g.tx().commit();
+//        } else {
+//            log.debug("{} createVertex found existing vertex {}", "createGlossaryVertex", vertexIt.next());
+//            g.tx().rollback();
+//        }
+//
+//    }
+//
+//    private void createElementVertex(Map<String, Element> context, JanusGraph graph, GlossaryTerm glossaryTerm,  boolean mainGraph) {
+//        GraphTraversalSource g = graph.traversal();
+//        List<String> mainGraphVertex = new ArrayList<>(Arrays.asList(RELATIONAL_COLUMN,RELATIONAL_TABLE,TABULAR_COLUMN,DATA_FILE));
+//
+//        for (Map.Entry<String, Element> entry : context.entrySet()) {
+//            String key = entry.getKey();
+//            Element value = entry.getValue();
+//
+//            Iterator<Vertex> vertexIt = g.V().hasLabel(key).has(PROPERTY_KEY_ENTITY_GUID, value.getGuid());
+//                if (!vertexIt.hasNext()) {
+//
+//                    if(mainGraphVertex.contains(key) && mainGraph){
+//                        addPropertiesToElementVertex(g,key,value,glossaryTerm);
+//
+//                    }
+//
+//                    if(!mainGraph) {
+//                        addPropertiesToElementVertex(g,key,value,glossaryTerm);
+//
+//                    }
+//                }
+//                else {
+//
+//                    log.debug("{} createVertex found existing vertex {}", "createElementVertex", vertexIt.next());
+//                    g.tx().rollback();
+//                }
+//        }
+//    }
+//
+//    private void addPropertiesToElementVertex(GraphTraversalSource g, String key, Element value,GlossaryTerm glossaryTerm){
+//
+//        Vertex v = g.addV(key).next();
+//        v.property(PROPERTY_KEY_NAME_QUALIFIED_NAME, value.getQualifiedName());
+//        v.property(PROPERTY_KEY_ENTITY_GUID, value.getGuid());
+//        v.property(PROPERTY_KEY_DISPLAY_NAME, value.getProperties().get("displayName"));
+//        v.property(PROPERTY_KEY_GLOSSARY_TERM, glossaryTerm.getDisplayName());
+//
+//        if(value.getType().equals(RELATIONAL_COLUMN) || value.getType().equals(TABULAR_COLUMN)) {
+//            v.property(PROPERTY_KEY_ENTITY_NAME, "Column");
+//        }
+//
+//        if(value.getType().equals(RELATIONAL_TABLE) || value.getType().equals(DATA_FILE)) {
+//            v.property(PROPERTY_KEY_ENTITY_NAME, "Table");
+//        }
+//
+//        g.tx().commit();
+//    }
+//
+//    private void semanticAssignmentCreateRelationshipsBuffer(Map<String, Element> context, GlossaryTerm
+//            glossaryTerm, String  technicalTermType) {
+//
+//        GraphTraversalSource g = bufferGraph.traversal();
+//        List<Element> elementsByRelationship = new ArrayList<>((context.values()));
+//
+//        if(technicalTermType.equals(RELATIONAL_COLUMN)){
+//            orderContextBasedOnType(g,elementsByRelationship,orderRelational,edgesForRelationalColumn);
+//            String assetGuid = context.get(technicalTermType).getGuid();
+//
+//            addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
+//        }
+//
+//        if(technicalTermType.equals(TABULAR_COLUMN)){
+//            orderContextBasedOnType(g,elementsByRelationship,orderTabular,edgesForTabularColumn);
+//            String assetGuid = context.get(technicalTermType).getGuid();
+//
+//            addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
+//
+//        }
+//
+//
+//    }
+//
+//    private void semanticAssignmentCreateRelationshipsMain(Map<String, Element> context, GlossaryTerm
+//            glossaryTerm, String  technicalTermType){
+//
+//        GraphTraversalSource g = mainGraph.traversal();
+//        String assetGuid = context.get(technicalTermType).getGuid();
+//
+//        addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
+//
+//
+//    }
+//
+//    private List<Element> orderContextBasedOnType(GraphTraversalSource g, List<Element> elementsByRelationship, List<String> order, List<String> edgesForRelationships){
+//        Collections.sort(elementsByRelationship, Comparator.comparing(
+//                (Element e) -> order.indexOf(e.getType())).thenComparing(Element::getType));
+//
+//        createRelationshipBasedOnType(g,elementsByRelationship,edgesForRelationships);
+//
+//        return  elementsByRelationship;
+//    }
+//
+//    private void createRelationshipBasedOnType(GraphTraversalSource g,List<Element> elementsByRelationship,List<String> edgesForRelationships){
+//
+//        for (int i = 0; i < elementsByRelationship.size() - 1; i++) {
+//
+//            String relationship = edgesForRelationships.get(i);
+//            boolean edge = g.V().has(elementsByRelationship.get(i).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i).getGuid()).outE(relationship)
+//                    .where(g.V().has(elementsByRelationship.get(i + 1).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i + 1).getGuid())).hasNext();
+//
+//            if (!edge) {
+//
+//                Vertex from = g.V().has(elementsByRelationship.get(i).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i).getGuid()).next();
+//                Vertex to = g.V().has(elementsByRelationship.get(i + 1).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i + 1).getGuid()).next();
+//
+//                from.addEdge(relationship, to);
+//            }
+//
+//        }
+//    }
+//
+//    private void addSemanticAssignmentRelationship(GraphTraversalSource g,String technicalTermType, String assetGuid, GlossaryTerm glossaryTerm){
+//
+//        Vertex glossaryTermVertex = g.V().has(GLOSSARY_TERM,PROPERTY_KEY_ENTITY_GUID,glossaryTerm.getGuid()).next();
+//
+//        Vertex technicalTermVertex = g.V().has(technicalTermType,PROPERTY_KEY_ENTITY_GUID,assetGuid).next();
+//
+//       boolean edge = g.V().has(GLOSSARY_TERM, PROPERTY_KEY_ENTITY_GUID,glossaryTerm.getGuid()).bothE(SEMANTIC_ASSIGNMENT)
+//                .where(g.V().has(technicalTermType, PROPERTY_KEY_ENTITY_GUID, assetGuid)).hasNext();
+//
+//        if (!edge) {
+//
+//            glossaryTermVertex.addEdge(SEMANTIC_ASSIGNMENT, technicalTermVertex);
+//        }
+//
+//        g.tx().commit();
+//
+//    }
 
-        Iterator<Vertex> vertexIt = g.V().hasLabel(term.getType()).has(PROPERTY_KEY_ENTITY_GUID, term.getGuid());
-        if (!vertexIt.hasNext()) {
-
-            Vertex v = g.addV(term.getType()).next();
-            v.property(PROPERTY_KEY_NAME_QUALIFIED_NAME, term.getQualifiedName());
-            v.property(PROPERTY_KEY_ENTITY_GUID, term.getGuid());
-            v.property(PROPERTY_KEY_ENTITY_NAME, term.getDisplayName());
-            g.tx().commit();
-        } else {
-            log.debug("{} createVertex found existing vertex {}", "createGlossaryVertex", vertexIt.next());
-            g.tx().rollback();
-        }
-
-    }
-
-    private void createElementVertex(Map<String, Element> context, JanusGraph graph, GlossaryTerm glossaryTerm,  boolean mainGraph) {
-        GraphTraversalSource g = graph.traversal();
-        List<String> mainGraphVertex = new ArrayList<>(Arrays.asList(RELATIONAL_COLUMN,RELATIONAL_TABLE,TABULAR_COLUMN,DATA_FILE));
-
-        for (Map.Entry<String, Element> entry : context.entrySet()) {
-            String key = entry.getKey();
-            Element value = entry.getValue();
-
-            Iterator<Vertex> vertexIt = g.V().hasLabel(key).has(PROPERTY_KEY_ENTITY_GUID, value.getGuid());
-                if (!vertexIt.hasNext()) {
-
-                    if(mainGraphVertex.contains(key) && mainGraph){
-                        addPropertiesToElementVertex(g,key,value,glossaryTerm);
-
-                    }
-
-                    if(!mainGraph) {
-                        addPropertiesToElementVertex(g,key,value,glossaryTerm);
-
-                    }
-                }
-                else {
-
-                    log.debug("{} createVertex found existing vertex {}", "createElementVertex", vertexIt.next());
-                    g.tx().rollback();
-                }
-        }
-    }
-
-    private void addPropertiesToElementVertex(GraphTraversalSource g, String key, Element value,GlossaryTerm glossaryTerm){
-
-        Vertex v = g.addV(key).next();
-        v.property(PROPERTY_KEY_NAME_QUALIFIED_NAME, value.getQualifiedName());
-        v.property(PROPERTY_KEY_ENTITY_GUID, value.getGuid());
-        v.property(PROPERTY_KEY_DISPLAY_NAME, value.getProperties().get("displayName"));
-        v.property(PROPERTY_KEY_GLOSSARY_TERM, glossaryTerm.getDisplayName());
-
-        if(value.getType().equals(RELATIONAL_COLUMN) || value.getType().equals(TABULAR_COLUMN)) {
-            v.property(PROPERTY_KEY_ENTITY_NAME, "Column");
-        }
-
-        if(value.getType().equals(RELATIONAL_TABLE) || value.getType().equals(DATA_FILE)) {
-            v.property(PROPERTY_KEY_ENTITY_NAME, "Table");
-        }
-
-        g.tx().commit();
-    }
-
-    private void semanticAssignmentCreateRelationshipsBuffer(Map<String, Element> context, GlossaryTerm
-            glossaryTerm, String  technicalTermType) {
-
-        GraphTraversalSource g = bufferGraph.traversal();
-        List<Element> elementsByRelationship = new ArrayList<>((context.values()));
-
-        if(technicalTermType.equals(RELATIONAL_COLUMN)){
-            orderContextBasedOnType(g,elementsByRelationship,orderRelational,edgesForRelationalColumn);
-            String assetGuid = context.get(technicalTermType).getGuid();
-
-            addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
-        }
-
-        if(technicalTermType.equals(TABULAR_COLUMN)){
-            orderContextBasedOnType(g,elementsByRelationship,orderTabular,edgesForTabularColumn);
-            String assetGuid = context.get(technicalTermType).getGuid();
-
-            addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
-
-        }
-
-
-    }
-
-    private void semanticAssignmentCreateRelationshipsMain(Map<String, Element> context, GlossaryTerm
-            glossaryTerm, String  technicalTermType){
-
-        GraphTraversalSource g = mainGraph.traversal();
-        String assetGuid = context.get(technicalTermType).getGuid();
-
-        addSemanticAssignmentRelationship(g,technicalTermType,assetGuid,glossaryTerm);
-
-
-    }
-
-    private List<Element> orderContextBasedOnType(GraphTraversalSource g, List<Element> elementsByRelationship, List<String> order, List<String> edgesForRelationships){
-        Collections.sort(elementsByRelationship, Comparator.comparing(
-                (Element e) -> order.indexOf(e.getType())).thenComparing(Element::getType));
-
-        createRelationshipBasedOnType(g,elementsByRelationship,edgesForRelationships);
-
-        return  elementsByRelationship;
-    }
-
-    private void createRelationshipBasedOnType(GraphTraversalSource g,List<Element> elementsByRelationship,List<String> edgesForRelationships){
-
-        for (int i = 0; i < elementsByRelationship.size() - 1; i++) {
-
-            String relationship = edgesForRelationships.get(i);
-            boolean edge = g.V().has(elementsByRelationship.get(i).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i).getGuid()).outE(relationship)
-                    .where(g.V().has(elementsByRelationship.get(i + 1).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i + 1).getGuid())).hasNext();
-
-            if (!edge) {
-
-                Vertex from = g.V().has(elementsByRelationship.get(i).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i).getGuid()).next();
-                Vertex to = g.V().has(elementsByRelationship.get(i + 1).getType(), PROPERTY_KEY_ENTITY_GUID, elementsByRelationship.get(i + 1).getGuid()).next();
-
-                from.addEdge(relationship, to);
-            }
-
-        }
-    }
-
-    private void addSemanticAssignmentRelationship(GraphTraversalSource g,String technicalTermType, String assetGuid, GlossaryTerm glossaryTerm){
-
-        Vertex glossaryTermVertex = g.V().has(GLOSSARY_TERM,PROPERTY_KEY_ENTITY_GUID,glossaryTerm.getGuid()).next();
-
-        Vertex technicalTermVertex = g.V().has(technicalTermType,PROPERTY_KEY_ENTITY_GUID,assetGuid).next();
-
-       boolean edge = g.V().has(GLOSSARY_TERM, PROPERTY_KEY_ENTITY_GUID,glossaryTerm.getGuid()).bothE(SEMANTIC_ASSIGNMENT)
-                .where(g.V().has(technicalTermType, PROPERTY_KEY_ENTITY_GUID, assetGuid)).hasNext();
-
-        if (!edge) {
-
-            glossaryTermVertex.addEdge(SEMANTIC_ASSIGNMENT, technicalTermVertex);
-        }
-
-        g.tx().commit();
-
-    }
 }
