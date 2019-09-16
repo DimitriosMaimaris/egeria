@@ -11,8 +11,8 @@ import org.odpi.openmetadata.accessservices.assetlineage.model.event.Element;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.GlossaryTerm;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.*;
-import org.odpi.openmetadata.governanceservers.openlineage.GraphEntityMapper;
-import org.odpi.openmetadata.governanceservers.openlineage.GraphRelationshipMapper;
+//import org.odpi.openmetadata.governanceservers.openlineage.GraphEntityMapper;
+//import org.odpi.openmetadata.governanceservers.openlineage.GraphRelationshipMapper;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.exceptions.OpenLineageException;
 import org.odpi.openmetadata.governanceservers.openlineage.scheduler.JobConfiguration;
@@ -30,94 +30,94 @@ public class GraphBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(GraphBuilder.class);
 
-    private GraphEntityMapper graphEntityMapper;
-    private GraphRelationshipMapper graphRelationshipMapper;
+//    private GraphEntityMapper graphEntityMapper;
+//    private GraphRelationshipMapper graphRelationshipMapper;
     private JobConfiguration jobConfiguration;
 
     public GraphBuilder() {
 
-        this.graphEntityMapper = new GraphEntityMapper();
-        this.graphRelationshipMapper = new GraphRelationshipMapper();
+//        this.graphEntityMapper = new GraphEntityMapper();
+//        this.graphRelationshipMapper = new GraphRelationshipMapper();
         this.jobConfiguration = new JobConfiguration();
     }
 
     /**
      * Creates new Entities in bufferGraph related to Lineage
      *
-     * @param entity  Entity event for creation coming from Asset Lineage OMAS
+//     * @param entity  Entity event for creation coming from Asset Lineage OMAS
      */
-    public void createEntity(AssetLineageEntityEvent entity) {
-
-        final String methodName = "createEntity";
-        GraphTraversalSource g = bufferGraph.traversal();
-        Vertex vertex;
-
-        //TODO check for proxy entity
-        Iterator<Vertex> vertexIt = g.V().hasLabel(entity.getTypeDefName()).has(PROPERTY_KEY_ENTITY_GUID, entity.getGUID());
-
-        if (!vertexIt.hasNext()) {
-
-            vertex = g.addV(entity.getTypeDefName()).next();
-
-            try {
-                vertex.property(PROPERTY_KEY_PROXY,false);
-                graphEntityMapper.mapEntityToVertex(entity, vertex);
-
-
-            } catch (Exception e) {
-                log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
-                g.tx().rollback();
-
-                OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
-
-                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entity.getGUID(), methodName,
-                        this.getClass().getName());
-
-                throw new OpenLineageException(400,
-                        this.getClass().getName(),
-                        methodName,
-                        errorMessage,
-                        errorCode.getSystemAction(),
-                        errorCode.getUserAction());
-            }
-            g.tx().commit();
-        } else {
-            vertex = vertexIt.next();
-            Object isProxy = g.V().hasLabel(entity.getTypeDefName()).has(PROPERTY_KEY_ENTITY_GUID, entity.getGUID())
-                    .values(PROPERTY_KEY_PROXY).next();
-            if(Boolean.valueOf(isProxy.toString())){
-                try {
-                    vertex.property(PROPERTY_KEY_PROXY, false);
-                    graphEntityMapper.mapEntityToVertex(entity, vertex);
-                }catch (Exception e) {
-                    log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
-                    g.tx().rollback();
-
-                    OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
-
-                    String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entity.getGUID(), methodName,
-                            this.getClass().getName());
-
-                    throw new OpenLineageException(400,
-                            this.getClass().getName(),
-                            methodName,
-                            errorMessage,
-                            errorCode.getSystemAction(),
-                            errorCode.getUserAction());
-
-                }
-
-
-                g.tx().commit();
-            }
-            else {
-                log.debug("{} found existing vertex {}", methodName, vertex);
-                g.tx().rollback();
-            }
-
-        }
-
-    }
+//    public void createEntity(AssetLineageEntityEvent entity) {
+//
+//        final String methodName = "createEntity";
+//        GraphTraversalSource g = bufferGraph.traversal();
+//        Vertex vertex;
+//
+//        //TODO check for proxy entity
+//        Iterator<Vertex> vertexIt = g.V().hasLabel(entity.getTypeDefName()).has(PROPERTY_KEY_ENTITY_GUID, entity.getGUID());
+//
+//        if (!vertexIt.hasNext()) {
+//
+//            vertex = g.addV(entity.getTypeDefName()).next();
+//
+//            try {
+//                vertex.property(PROPERTY_KEY_PROXY,false);
+//                graphEntityMapper.mapEntityToVertex(entity, vertex);
+//
+//
+//            } catch (Exception e) {
+//                log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
+//                g.tx().rollback();
+//
+//                OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
+//
+//                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entity.getGUID(), methodName,
+//                        this.getClass().getName());
+//
+//                throw new OpenLineageException(400,
+//                        this.getClass().getName(),
+//                        methodName,
+//                        errorMessage,
+//                        errorCode.getSystemAction(),
+//                        errorCode.getUserAction());
+//            }
+//            g.tx().commit();
+//        } else {
+//            vertex = vertexIt.next();
+//            Object isProxy = g.V().hasLabel(entity.getTypeDefName()).has(PROPERTY_KEY_ENTITY_GUID, entity.getGUID())
+//                    .values(PROPERTY_KEY_PROXY).next();
+//            if(Boolean.valueOf(isProxy.toString())){
+//                try {
+//                    vertex.property(PROPERTY_KEY_PROXY, false);
+//                    graphEntityMapper.mapEntityToVertex(entity, vertex);
+//                }catch (Exception e) {
+//                    log.error("{} Caught exception from entity mapper {}", methodName, e.getMessage());
+//                    g.tx().rollback();
+//
+//                    OpenLineageErrorCode errorCode = OpenLineageErrorCode.ENTITY_NOT_CREATED;
+//
+//                    String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(entity.getGUID(), methodName,
+//                            this.getClass().getName());
+//
+//                    throw new OpenLineageException(400,
+//                            this.getClass().getName(),
+//                            methodName,
+//                            errorMessage,
+//                            errorCode.getSystemAction(),
+//                            errorCode.getUserAction());
+//
+//                }
+//
+//
+//                g.tx().commit();
+//            }
+//            else {
+//                log.debug("{} found existing vertex {}", methodName, vertex);
+//                g.tx().rollback();
+//            }
+//
+//        }
+//
+//    }
 
     public void removeSemanticRelationship(DeletePurgedRelationshipEvent event) {
         GraphTraversalSource g = mainGraph.traversal();
@@ -149,59 +149,59 @@ public class GraphBuilder {
      *
      * @param event Relationship event coming from Asset Lineage OMAS
      */
-    public void createRelationship(RelationshipEvent event) {
-
-        String methodName = "createRelationship";
-
-        final String entityProxyOne = "EntityProxyOne";
-        final String entityProxyTwo = "EntityProxyTwo";
-
-        final String relationshipType = event.getTypeDefName();
-        final String relationshipGuid = event.getGUID();
-
-
-        // Begin a graph transaction. Locate the vertices for the ends, and create an edge between them.
-        if (relationshipType == null) {
-            log.error("{} Relationship type name is missing", methodName);
-            OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_TYPE_NAME_NOT_KNOWN;
-
-            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
-                    this.getClass().getName());
-
-            throw new OpenLineageException(400,
-                    this.getClass().getName(),
-                    methodName,
-                    errorMessage,
-                    errorCode.getSystemAction(),
-                    errorCode.getUserAction());
-
-        }
-
-        if (relationshipType.equals(SEMANTIC_ASSIGNMENT)) {
-
-//            createEntitiesSemanticAssignment(event);
-        } else {
-
-            GraphTraversalSource g = bufferGraph.traversal();
-
-            Iterator<Edge> edgeIt = g.E().hasLabel(relationshipType).has(PROPERTY_KEY_RELATIONSHIP_GUID, relationshipGuid);
-            if (edgeIt.hasNext()) {
-                Edge edge = edgeIt.next();
-                log.error("{} found existing edge {}", methodName, edge);
-                g.tx().rollback();
-                OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_ALREADY_EXISTS;
-
-                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
-                        this.getClass().getName());
-
-                throw new OpenLineageException(400,
-                        this.getClass().getName(),
-                        methodName,
-                        errorMessage,
-                        errorCode.getSystemAction(),
-                        errorCode.getUserAction());
-            }
-        }
+//    public void createRelationship(RelationshipEvent event) {
+//
+//        String methodName = "createRelationship";
+//
+//        final String entityProxyOne = "EntityProxyOne";
+//        final String entityProxyTwo = "EntityProxyTwo";
+//
+//        final String relationshipType = event.getTypeDefName();
+////        final String relationshipGuid = event.getGUID();
+//
+//
+//        // Begin a graph transaction. Locate the vertices for the ends, and create an edge between them.
+//        if (relationshipType == null) {
+//            log.error("{} Relationship type name is missing", methodName);
+//            OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_TYPE_NAME_NOT_KNOWN;
+//
+//            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
+//                    this.getClass().getName());
+//
+//            throw new OpenLineageException(400,
+//                    this.getClass().getName(),
+//                    methodName,
+//                    errorMessage,
+//                    errorCode.getSystemAction(),
+//                    errorCode.getUserAction());
+//
+//        }
+//
+//        if (relationshipType.equals(SEMANTIC_ASSIGNMENT)) {
+//
+////            createEntitiesSemanticAssignment(event);
+//        } else {
+//
+//            GraphTraversalSource g = bufferGraph.traversal();
+//
+//            Iterator<Edge> edgeIt = g.E().hasLabel(relationshipType).has(PROPERTY_KEY_RELATIONSHIP_GUID, relationshipGuid);
+//            if (edgeIt.hasNext()) {
+//                Edge edge = edgeIt.next();
+//                log.error("{} found existing edge {}", methodName, edge);
+//                g.tx().rollback();
+//                OpenLineageErrorCode errorCode = OpenLineageErrorCode.RELATIONSHIP_ALREADY_EXISTS;
+//
+//                String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(relationshipGuid, methodName,
+//                        this.getClass().getName());
+//
+//                throw new OpenLineageException(400,
+//                        this.getClass().getName(),
+//                        methodName,
+//                        errorMessage,
+//                        errorCode.getSystemAction(),
+//                        errorCode.getUserAction());
+//            }
+//        }
 
 //            String entityOneGUID = event.getProxies().get(entityProxyOne).getGUID();
 //            String entityTwoGUID = event.getProxies().get(entityProxyTwo).getGUID();
@@ -264,7 +264,7 @@ public class GraphBuilder {
 //
 //    }
 
-    }
+//    }
 //    private Vertex createEntityProxy(AssetLineageEntityEvent entityProxy) {
 //
 //        final String methodName = "createEntityProxy";

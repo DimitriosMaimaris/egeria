@@ -60,7 +60,7 @@ public class ContextHandler {
     }
 
 
-    public AssetContext getAssetContext(String serverName, String userId, String guid) {
+    public AssetContext getAssetContext(String userId, String guid) {
 
         graph = new AssetContext();
         try {
@@ -111,9 +111,8 @@ public class ContextHandler {
         final String typeDefName = entityDetail.getType().getTypeDefName();
         Optional<TypeDef> isComplexSchemaType = isComplexSchemaType(userId,typeDefName);
 
-        //TODO check for Table entities
         if (isComplexSchemaType.isPresent()) {
-//            setAssetDetails(userId, assetElement, knownAssetConnection, entityDetail);
+            setAssetDetails(userId, entityDetail);
         }
 
         if(hasSchemaType(typeDefName)) {

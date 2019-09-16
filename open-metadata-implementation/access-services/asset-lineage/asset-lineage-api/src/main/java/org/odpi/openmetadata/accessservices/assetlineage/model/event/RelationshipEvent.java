@@ -10,13 +10,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.PUBLIC_ONLY;
 
 import org.odpi.openmetadata.accessservices.assetlineage.Edge;
-import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.Asset;
-import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.AssetLineageEvent;
-import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.properties.instances.EntityProxy;
-import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.properties.instances.InstanceProperties;
-import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.properties.instances.Relationship;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +20,7 @@ import java.util.Set;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "class")
-public class RelationshipEvent extends AssetLineageEntityEvent {
+public class RelationshipEvent extends AssetLineageEvent {
 
     private String relationshipGuid = null;
     private String typeDefName = null;

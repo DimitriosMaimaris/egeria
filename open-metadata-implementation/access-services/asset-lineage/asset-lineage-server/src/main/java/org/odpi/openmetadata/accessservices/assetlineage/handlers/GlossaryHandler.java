@@ -61,14 +61,14 @@ public class GlossaryHandler {
      * Returns the glossary term object corresponding to the supplied asset that can possibly have a glossary Term.
      *
      * @param assetGuid guid of the asset that has been created
-     * @param userID    String - userId of user making request.
+     * @param userId    String - userId of user making request.
      * @return Glossary Term retrieved from the repository, null if not semantic assignment to the asset
      */
-    public Map<String, Set<Edge>> getGlossaryTerm(String assetGuid, String userID, EntityDetail entityDetail, AssetContext assetContext) {
+    public Map<String, Set<Edge>> getGlossaryTerm(String assetGuid, String userId, EntityDetail entityDetail, AssetContext assetContext) {
 
         try {
             graph = assetContext;
-            boolean glossary = getGlossary(userID, assetGuid, entityDetail.getType().getTypeDefName());
+            boolean glossary = getGlossary(userId, assetGuid, entityDetail.getType().getTypeDefName());
 
             if (glossary) {
                 log.error("No Semantic assignment for the asset with guid {} found", assetGuid);
@@ -142,10 +142,10 @@ public class GlossaryHandler {
         return entityDetails.isEmpty();
     }
 
-    public Map<String, Set<Edge>>  getGlossaryFromProxy(Relationship relationship,String serviceOperationName) throws InvalidParameterException,
+    public Map<String, Set<Edge>>  getGlossaryFromProxy(Relationship relationship,String serverUserName) throws InvalidParameterException,
                                                                                                                       PropertyServerException,
                                                                                                                       UserNotAuthorizedException {
-           boolean glossaryContextEmpty = addSemanticAssignmentToContext(serviceOperationName,relationship);
+           boolean glossaryContextEmpty = addSemanticAssignmentToContext(serverUserName,relationship);
            if(!glossaryContextEmpty){
                return graph.getNeighbors();
            }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.odpi.openmetadata.accessservices.assetlineage.Edge;
-import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.AssetLineageEvent;
 
 import java.util.Map;
 import java.util.Set;

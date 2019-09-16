@@ -21,8 +21,6 @@ import org.odpi.openmetadata.frameworks.connectors.properties.beans.Connection;
 import org.odpi.openmetadata.repositoryservices.auditlog.OMRSAuditLog;
 import org.odpi.openmetadata.repositoryservices.connectors.omrstopic.OMRSTopicListener;
 import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.properties.instances.*;
-import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.repositoryconnector.OMRSRepositoryHelper;
-import org.odpi.openmetadata.repositoryservices.connectors.stores.metadatacollectionstore.repositoryconnector.OMRSRepositoryValidator;
 import org.odpi.openmetadata.repositoryservices.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +33,6 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
 
     private static final Logger log = LoggerFactory.getLogger(AssetLineageOMRSTopicListener.class);
     private static AssetLineageInstanceHandler instanceHandler = new AssetLineageInstanceHandler();
-    private OMRSRepositoryValidator repositoryValidator;
-    private OMRSRepositoryHelper repositoryHelper;
-    private String componentName;
     private List<String> supportedZones;
     private AssetLineagePublisher publisher;
     private String serverName;
@@ -47,26 +42,17 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * along with classes for testing and manipulating instances.
      *
      * @param assetLineageOutTopic connection to the out topic
-     * @param repositoryValidator  provides validation of metadata instance
-     * @param repositoryHelper     helper object for building and querying TypeDefs and metadata instances
-     * @param componentName        name of component
      * @param supportedZones       list of zones covered by this instance of the access service.
      * @param auditLog             log for errors and information messages
      * @param serverUserName       name of the user of the server instance
      * @param serverName           name of this server instance
      */
     public AssetLineageOMRSTopicListener(Connection assetLineageOutTopic,
-                                         OMRSRepositoryValidator repositoryValidator,
-                                         OMRSRepositoryHelper repositoryHelper,
-                                         String componentName,
                                          List<String> supportedZones,
                                          OMRSAuditLog auditLog,
                                          String serverUserName,
                                          String serverName) throws OMAGConfigurationErrorException {
 
-        this.repositoryValidator = repositoryValidator;
-        this.repositoryHelper = repositoryHelper;
-        this.componentName = componentName;
         this.supportedZones = supportedZones;
         this.serverName = serverName;
         this.serverUserName = serverUserName;
@@ -79,7 +65,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * @param event inbound event
      */
     public void processRegistryEvent(OMRSRegistryEvent event) {
-        log.debug("Ignoring registry event: {} " ,event.toString());
+        log.debug("Ignoring registry event: {} " ,event);
     }
 
 
@@ -89,7 +75,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * @param event inbound event
      */
     public void processTypeDefEvent(OMRSTypeDefEvent event) {
-        log.debug("Ignoring type event: {} ", event.toString());
+        log.debug("Ignoring type event: {} ", event);
     }
 
 
@@ -132,7 +118,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * of specific Types that Asset Lineage OMAS is interested in processing
      *
      * @param entityDetail         event to validate
-     * @param serviceOperationName name of the calling operation
+     * @param serviceOperationName typically the top-level methodName that makes the call
      */
     public void processNewEntityEvent(EntityDetail entityDetail, String serviceOperationName) {
         final String typeDefName = entityDetail.getType().getTypeDefName();
@@ -149,10 +135,9 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      *
      * @param entityDetail         entity to get context
      * @param typeName             the type of the entity
-     * @param serviceOperationName name of the calling operation
+     * @param serviceOperationName typically the top-level methodName that makes the call
      */
     private void processNewEntity(EntityDetail entityDetail, String typeName, String serviceOperationName) {
-        final String methodName = "processNewEntity";
 
         try {
             if (typeName.equals(PROCESS)) {
@@ -163,8 +148,6 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
             }
         }
         catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException e) {
-                log.error("Retrieving handler for the access service failed at {}, Exception message is: {}", methodName, e.getMessage());
-
                 throw new AssetLineageException(e.getReportedHTTPCode(),
                                                 e.getReportingClassName(),
                                                 e.getReportingActionDescription(),
@@ -180,7 +163,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * Takes the context for a Process and publishes the event to the Cohort
      *
      * @param entityDetail         entity to get context
-     * @param serviceOperationName name of the calling operation
+     * @param serviceOperationName typically the top-level methodName that makes the call
      */
     private void getContextForProcess(EntityDetail entityDetail, String serviceOperationName) throws InvalidParameterException,
                                                                                                      PropertyServerException,
@@ -201,10 +184,10 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         String technicalGuid = entityDetail.getGUID();
 
         ContextHandler newContextHandler = instanceHandler.getContextHandler(serverUserName,serverName,serviceOperationName);
-        AssetContext assetContext = newContextHandler.getAssetContext(serverName,serverUserName,technicalGuid);
+        AssetContext assetContext = newContextHandler.getAssetContext(serverUserName,technicalGuid);
 
         GlossaryHandler glossaryHandler = instanceHandler.getGlossaryHandler(serverUserName,serverName,serviceOperationName);
-        Map<String,Set<Edge>> context =  glossaryHandler.getGlossaryTerm(technicalGuid,serviceOperationName,entityDetail,assetContext);
+        Map<String,Set<Edge>> context =  glossaryHandler.getGlossaryTerm(technicalGuid,serverUserName,entityDetail,assetContext);
 
         ProcessLineageEvent event = new ProcessLineageEvent();
         if(context.size() != 0){
@@ -220,12 +203,11 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
     }
 
     /**
-     * @param relationship         - details of the new relationship
-     * @param serviceOperationName name of the calling operation
+     * @param relationship         details of the new relationship
+     * @param serviceOperationName typically the top-level methodName that makes the call
      */
     public void processRelationship(Relationship relationship,String serviceOperationName) {
 
-        final String methodName = "processRelationship";
         if (!isValidRelationshipEvent(relationship))
             log.info("Event is ignored as the relationship is not a semantic assignment for a column or table");
         else {
@@ -234,8 +216,6 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
             try {
                 processSemanticAssignment(relationship, serviceOperationName);
             } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException  e) {
-                log.error("Retrieving handler for the access service failed at {}, Exception message is: {}", methodName, e.getMessage());
-
                 throw new AssetLineageException(e.getReportedHTTPCode(),
                                                 e.getReportingClassName(),
                                                 e.getReportingActionDescription(),
@@ -262,12 +242,9 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
     private boolean isValidRelationshipEvent(Relationship relationship) {
         String entityProxyOneType = relationship.getEntityOneProxy().getType().getTypeDefName();
 
-        if (relationship.getType().getTypeDefName().equals(SEMANTIC_ASSIGNMENT) &&
+        return (relationship.getType().getTypeDefName().equals(SEMANTIC_ASSIGNMENT) &&
                 (entityProxyOneType.equals(RELATIONAL_COLUMN) || entityProxyOneType.equals(RELATIONAL_TABLE) || entityProxyOneType.equals(TABULAR_COLUMN))
-        ) {
-            return true;
-        }
-        return false;
+        );
     }
 
 
@@ -277,24 +254,21 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
      * @param relationship - details of the new relationship
      *
      */
-    private void processSemanticAssignment(Relationship relationship,String serviceOperationName) throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+    private void processSemanticAssignment(Relationship relationship,String serviceOperationName) throws InvalidParameterException,
+                                                                                                         PropertyServerException,
+                                                                                                         UserNotAuthorizedException {
 
         RelationshipEvent relationshipEvent = new RelationshipEvent();
 
         GlossaryHandler glossaryHandler = instanceHandler.getGlossaryHandler(serverUserName,serverName,serviceOperationName);
-        Map<String,Set<Edge>> glossaryContext = glossaryHandler.getGlossaryFromProxy(relationship,serviceOperationName);
+        Map<String,Set<Edge>> glossaryContext = glossaryHandler.getGlossaryFromProxy(relationship,serverUserName);
 
         relationshipEvent.setTypeDefName(relationship.getType().getTypeDefName());
         relationshipEvent.setRelationshipGuid(relationship.getGUID());
         relationshipEvent.setAssetContext(glossaryContext);
         relationshipEvent.setOmrsInstanceEventType(OMRSInstanceEventType.NEW_RELATIONSHIP_EVENT);
 
-        publisher.publishRelationshipEvent(relationshipEvent);    }
-
-    private void processUpdatedEntityEvent(EntityDetail originalEntity, EntityDetail entity) {
-    }
-
-    private void processDeletedEntity(EntityDetail entity) {
+        publisher.publishRelationshipEvent(relationshipEvent);
     }
 
 }

@@ -1,11 +1,8 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Copyright Contributors to the ODPi Egeria project. */
-package org.odpi.openmetadata.accessservices.assetlineage.model.assetContext;
+package org.odpi.openmetadata.accessservices.assetlineage.model.event;
 
 import com.fasterxml.jackson.annotation.*;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.AssetLineageEntityEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.DeletePurgedRelationshipEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.repositoryservices.events.OMRSInstanceEventType;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
@@ -20,8 +17,6 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.PUBLIC_
         property = "class")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = RelationshipEvent.class, name = "RelationshipEvent"),
-        @JsonSubTypes.Type(value = DeletePurgedRelationshipEvent.class, name = "DeletePurgedRelationshipEvent"),
-        @JsonSubTypes.Type(value = AssetLineageEntityEvent.class, name = "AssetLineageEntityEvent")
 })
 public abstract class AssetLineageEvent {
 
