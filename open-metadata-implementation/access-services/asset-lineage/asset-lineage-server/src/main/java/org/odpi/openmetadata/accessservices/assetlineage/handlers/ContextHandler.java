@@ -142,7 +142,10 @@ public class ContextHandler {
                                                                                                                    InvalidParameterException {
         List<Relationship> relationships = commonHandler.getRelationshipByType(userId, startEntity.getGUID(), relationshipType,typeDefName);
 
-        relationships = relationships.stream().filter(relationship -> relationship.getEntityTwoProxy().getGUID().equals(startEntity.getGUID())).collect(Collectors.toList());
+        if(startEntity.getType().getTypeDefName().equals(FILE_FOLDER)) {
+            relationships = relationships.stream().filter(relationship ->
+                    relationship.getEntityTwoProxy().getGUID().equals(startEntity.getGUID())).collect(Collectors.toList());
+        }
 
         List<EntityDetail> entityDetails = new ArrayList<>();
         for (Relationship relationship : relationships) {
@@ -207,7 +210,7 @@ public class ContextHandler {
 
         if (!connections.isEmpty()) {
             for (EntityDetail entity : connections) {
-                getRelationshipsBetweenEntities(userId, entity, CONNECTION_ENDPOINT, "Connection");
+                getRelationshipsBetweenEntities(userId, entity, CONNECTION_ENDPOINT, CONNECTION);
             }
         }
     }
@@ -220,7 +223,7 @@ public class ContextHandler {
 
         Optional<EntityDetail> connection = connections.stream().findFirst();
         if (connection.isPresent()) {
-            return;
+            getRelationshipsBetweenEntities(userId, entityDetail, CONNECTION_ENDPOINT, CONNECTION);
             }
 
        Optional<EntityDetail> nestedFolder =   getRelationshipsBetweenEntities(userId, entityDetail, FOLDER_HIERARCHY, FILE_FOLDER)

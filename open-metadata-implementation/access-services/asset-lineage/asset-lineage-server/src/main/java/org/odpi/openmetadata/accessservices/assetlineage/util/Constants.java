@@ -32,6 +32,8 @@ public final class Constants {
     public static final String TABULAR_COLUMN_TYPE = "TabularColumnType";
     public static final String TABULAR_COLUMN = "TabularColumn";
     public static final String DATA_FILE = "DataFile";
+    public static final String CONNECTION = "Connection";
+
 
     //Relationships Type
     public static final String SCHEMA_ATTRIBUTE_TYPE = "SchemaAttributeType";
