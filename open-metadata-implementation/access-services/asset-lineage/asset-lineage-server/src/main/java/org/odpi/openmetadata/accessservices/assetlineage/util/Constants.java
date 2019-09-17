@@ -22,7 +22,8 @@ public final class Constants {
     public static final String RELATIONAL_TABLE = "RelationalTable";
     public static final String DEPLOYED_DB_SCHEMA_TYPE = "DeployedDatabaseSchema";
     public static final String DATA_STORE = "DataStore";
-
+    public static final String DATABASE = "Database";
+    public static final String FILE_FOLDER = "FileFolder";
 
     public static final String PROCESS = "Process";
     public static final String PORT_ALIAS = "PortAlias";
@@ -50,6 +51,7 @@ public final class Constants {
     public static final String SCHEMA_TYPE = "SchemaType";
     public static final String PORT_SCHEMA = "PortSchema";
     public static final String NESTED_FILE = "NestedFile";
+    public static final String FOLDER_HIERARCHY = "FolderHierarchy";
 
     //Instance Properties fields
     public static final String DISPLAY_NAME = "displayName";

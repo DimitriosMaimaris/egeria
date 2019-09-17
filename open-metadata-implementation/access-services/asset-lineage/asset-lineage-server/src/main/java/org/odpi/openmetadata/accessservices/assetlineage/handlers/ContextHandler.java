@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.odpi.openmetadata.accessservices.assetlineage.ffdc.AssetLineageErrorCode.ENTITY_NOT_FOUND;
 import static org.odpi.openmetadata.accessservices.assetlineage.util.Constants.*;
@@ -35,7 +36,6 @@ public class ContextHandler {
     private InvalidParameterHandler invalidParameterHandler;
     private CommonHandler commonHandler;
     private AssetContext graph;
-
     /**
      * Construct the discovery engine configuration handler caching the objects
      * needed to operate within a single server instance.
@@ -142,6 +142,8 @@ public class ContextHandler {
                                                                                                                    InvalidParameterException {
         List<Relationship> relationships = commonHandler.getRelationshipByType(userId, startEntity.getGUID(), relationshipType,typeDefName);
 
+        relationships = relationships.stream().filter(relationship -> relationship.getEntityTwoProxy().getGUID().equals(startEntity.getGUID())).collect(Collectors.toList());
+
         List<EntityDetail> entityDetails = new ArrayList<>();
         for (Relationship relationship : relationships) {
 
@@ -169,12 +171,64 @@ public class ContextHandler {
     private void getAsset(String userId, EntityDetail dataSet) throws InvalidParameterException,
                                                                       PropertyServerException,
                                                                       UserNotAuthorizedException {
+        List<EntityDetail> entityDetails;
+
         final String typeDefName = dataSet.getType().getTypeDefName();
         if (typeDefName.equals(DATA_FILE)) {
-            getRelationshipsBetweenEntities(userId, dataSet, NESTED_FILE,typeDefName);
+            entityDetails = getRelationshipsBetweenEntities(userId, dataSet, NESTED_FILE,typeDefName);
         } else {
-            getRelationshipsBetweenEntities(userId, dataSet, DATA_CONTENT_FOR_DATA_SET,typeDefName);
+            entityDetails =  getRelationshipsBetweenEntities(userId, dataSet, DATA_CONTENT_FOR_DATA_SET,typeDefName);
 
+        }
+
+
+        getEndpoints(userId,entityDetails.toArray(new EntityDetail[0]));
+    }
+
+    private void getEndpoints(String userId,EntityDetail... entityDetails) throws InvalidParameterException,
+                                                                                  PropertyServerException,
+                                                                                  UserNotAuthorizedException {
+        for(EntityDetail entityDetail: entityDetails) {
+            if (entityDetail != null) {
+                if (entityDetail.getType().getTypeDefName().equals(DATABASE)) {
+                    getConnections(userId, entityDetail);
+                } else {
+                    getFolderHierarchy(userId, entityDetail);
+                }
+            }
+        }
+    }
+
+    private void getConnections(String userId, EntityDetail entityDetail) throws UserNotAuthorizedException,
+                                                                                 PropertyServerException,
+                                                                                 InvalidParameterException {
+
+        List<EntityDetail> connections = getRelationshipsBetweenEntities(userId, entityDetail, CONNECTION_TO_ASSET, DATABASE);
+
+        if (!connections.isEmpty()) {
+            for (EntityDetail entity : connections) {
+                getRelationshipsBetweenEntities(userId, entity, CONNECTION_ENDPOINT, "Connection");
+            }
+        }
+    }
+
+    private void getFolderHierarchy(String userId,EntityDetail entityDetail) throws InvalidParameterException,
+                                                                                    PropertyServerException,
+                                                                                    UserNotAuthorizedException {
+        List<EntityDetail> connections = getRelationshipsBetweenEntities(userId, entityDetail,
+                                                                         CONNECTION_TO_ASSET, entityDetail.getType().getTypeDefName());
+
+        Optional<EntityDetail> connection = connections.stream().findFirst();
+        if (connection.isPresent()) {
+            return;
+            }
+
+       Optional<EntityDetail> nestedFolder =   getRelationshipsBetweenEntities(userId, entityDetail, FOLDER_HIERARCHY, FILE_FOLDER)
+                                                                              .stream()
+                                                                              .findFirst();
+
+        if(nestedFolder.isPresent()) {
+            getFolderHierarchy(userId, nestedFolder.get());
         }
     }
 
@@ -186,7 +240,7 @@ public class ContextHandler {
     }
 
     private boolean hasSchemaType(String typeDefName){
-        List<String> entitiesWithScehmaTypes = new ArrayList<>(Arrays.asList(TABULAR_COLUMN,RELATIONAL_COLUMN));
-        return entitiesWithScehmaTypes.contains(typeDefName);
+        List<String> entitiesWithSchemaTypes = new ArrayList<>(Arrays.asList(TABULAR_COLUMN,RELATIONAL_COLUMN));
+        return entitiesWithSchemaTypes.contains(typeDefName);
     }
 }
