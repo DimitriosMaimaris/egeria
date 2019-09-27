@@ -1,8 +1,7 @@
 /* SPDX-License-Identifier: Apache 2.0 */
 /* Copyright Contributors to the ODPi Egeria project. */
-package org.odpi.openmetadata.governanceservers.openlineage.services;
+package org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.temporal.ChronoUnit;
 
-import static org.odpi.openmetadata.governanceservers.openlineage.util.GraphConstants.corePropertyTypes;
+import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.utils.GraphConstants.corePropertyTypes;
 
 public class IndexingFactory {
 

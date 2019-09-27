@@ -9,7 +9,7 @@ import org.odpi.openmetadata.accessservices.assetlineage.ffdc.exception.AssetLin
 import org.odpi.openmetadata.accessservices.assetlineage.handlers.ContextHandler;
 import org.odpi.openmetadata.accessservices.assetlineage.handlers.GlossaryHandler;
 import org.odpi.openmetadata.accessservices.assetlineage.handlers.ProcessHandler;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.ProcessLineageEvent;
+import org.odpi.openmetadata.accessservices.assetlineage.model.event.ContextLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.*;
 import org.odpi.openmetadata.accessservices.assetlineage.outtopic.AssetLineagePublisher;
 import org.odpi.openmetadata.accessservices.assetlineage.server.AssetLineageInstanceHandler;
@@ -172,7 +172,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         ProcessHandler processHandler = instanceHandler.getProcessHandler(serverUserName, serverName, serviceOperationName);
         Map<String, Set<Edge>>  processContext = processHandler.getProcessContext(serverUserName, entityDetail.getGUID());
 
-        ProcessLineageEvent event = new ProcessLineageEvent();
+        ContextLineageEvent event = new ContextLineageEvent();
         event.setProcessContext(processContext);
 
         publisher.publishRelationshipEvent(event);
@@ -189,7 +189,8 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         GlossaryHandler glossaryHandler = instanceHandler.getGlossaryHandler(serverUserName,serverName,serviceOperationName);
         Map<String,Set<Edge>> context =  glossaryHandler.getGlossaryTerm(technicalGuid,serverUserName,entityDetail,assetContext);
 
-        ProcessLineageEvent event = new ProcessLineageEvent();
+        ContextLineageEvent event = new ContextLineageEvent();
+        event.setOmrsInstanceEventType(OMRSInstanceEventType.NEW_ENTITY_EVENT);
         if(context.size() != 0){
             event.setProcessContext(context);
         }

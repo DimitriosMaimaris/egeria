@@ -1,31 +1,29 @@
-/* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
-package org.odpi.openmetadata.governanceservers.openlineage.services;
+package org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector;
+
+
 
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.schema.*;
-import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
-import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.exceptions.OpenLineageException;
-import org.odpi.openmetadata.governanceservers.openlineage.util.EdgeLabels;
-import org.odpi.openmetadata.governanceservers.openlineage.util.VertexLabels;
+import org.janusgraph.core.schema.JanusGraphManagement;
+import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.model.OpenLineageErrorCode;
+import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.model.ffdc.OpenLineageException;
+import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.utils.EdgeLabels;
+import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.utils.VertexLabels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.odpi.openmetadata.adapters.repositoryservices.graphrepository.repositoryconnector.GraphOMRSConstants.PROPERTY_NAME_GUID;
-import static org.odpi.openmetadata.governanceservers.openlineage.util.GraphConstants.*;
+import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.utils.GraphConstants.*;
 
 
-public class BufferGraphFactory extends IndexingFactory {
+public class JanusGraphBufferFactory extends IndexingFactory{
 
-    private static final Logger log = LoggerFactory.getLogger(BufferGraphFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(JanusGraphBufferFactory.class);
 
-    public static JanusGraph openBufferGraph(){
+    public JanusGraph openGraph() {
 
         final String methodName = "open";
         JanusGraph janusGraph;
@@ -44,21 +42,21 @@ public class BufferGraphFactory extends IndexingFactory {
             log.error("{} could not open graph with error: {}", "open", e.getMessage());
             OpenLineageErrorCode errorCode = OpenLineageErrorCode.CANNOT_OPEN_GRAPH_DB;
 
-            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(e.getMessage(), methodName, BufferGraphFactory.class.getName());
+            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(e.getMessage(), methodName, JanusGraphBufferFactory.class.getName());
 
             throw new OpenLineageException(400,
-                                           BufferGraphFactory.class.getName(),
-                                           methodName,
-                                           errorMessage,
-                                           errorCode.getSystemAction(),
-                                           errorCode.getUserAction());
+                    JanusGraphBufferFactory.class.getName(),
+                    methodName,
+                    errorMessage,
+                    errorCode.getSystemAction(),
+                    errorCode.getUserAction());
         }
 
         initializeGraph(janusGraph);
         return janusGraph;
     }
 
-    private static void initializeGraph(JanusGraph graph){
+    public void initializeGraph(JanusGraph graph) {
 
         final String methodName = "initializeGraph";
         /*
@@ -69,13 +67,13 @@ public class BufferGraphFactory extends IndexingFactory {
             JanusGraphManagement management = graph.openManagement();
 
             Set<String> vertexLabels = Stream.of(VertexLabels.values())
-                                             .map(Enum::name)
-                                             .collect(Collectors.toSet());
+                    .map(Enum::name)
+                    .collect(Collectors.toSet());
 
 
             Set<String> relationshipsLabels = Stream.of(EdgeLabels.values())
-                                                    .map(Enum::name)
-                                                    .collect(Collectors.toSet());
+                    .map(Enum::name)
+                    .collect(Collectors.toSet());
 
             // Each vertex has a label that reflects the Asset
             management = checkAndAddLabelVertexOrEdge(vertexLabels, management);
@@ -93,15 +91,15 @@ public class BufferGraphFactory extends IndexingFactory {
             OpenLineageErrorCode errorCode = OpenLineageErrorCode.GRAPH_INITIALIZATION_ERROR;
             String errorMessage = errorCode.getErrorMessageId();
             throw new OpenLineageException(400,
-                                           BufferGraphFactory.class.getName(),
-                                           methodName,
-                                           errorMessage,
-                                           errorCode.getSystemAction(),
-                                           errorCode.getUserAction());
+                    JanusGraphBufferFactory.class.getName(),
+                    methodName,
+                    errorMessage,
+                    errorCode.getSystemAction(),
+                    errorCode.getUserAction());
         }
     }
 
-    private static void createIndexes(JanusGraph graph){
+    public void createIndexes(JanusGraph graph){
 
         createCompositeIndexForVertexProperty(PROPERTY_NAME_GUID,PROPERTY_KEY_ENTITY_GUID,true,graph);
         createCompositeIndexForVertexProperty(PROPERTY_NAME_LABEL,PROPERTY_KEY_LABEL,false,graph);
@@ -118,9 +116,4 @@ public class BufferGraphFactory extends IndexingFactory {
         return management;
 
     }
-
-
-
 }
-
-

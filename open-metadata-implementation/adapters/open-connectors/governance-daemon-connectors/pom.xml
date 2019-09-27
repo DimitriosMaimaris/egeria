@@ -30,6 +30,7 @@
         <module>security-officer-connectors</module>
         <module>data-engine-connectors</module>
         <module>data-platform-connectors</module>
+        <module>open-lineage-connectors</module>
     </modules>
 
 

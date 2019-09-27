@@ -4,6 +4,7 @@ package org.odpi.openmetadata.governanceservers.openlineage.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.AssetLineageEvent;
+import org.odpi.openmetadata.accessservices.assetlineage.model.event.ContextLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.DeletePurgedRelationshipEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.governanceservers.openlineage.eventprocessors.GraphBuilder;
@@ -58,8 +59,8 @@ public class InTopicListener implements OpenMetadataTopicListener {
         try {
             switch (event.getOmrsInstanceEventType()) {
                 case NEW_ENTITY_EVENT:
-//                    AssetLineageEntityEvent newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, AssetLineageEntityEvent.class);
-//                    graphBuilder.createEntity(newEntityEvent);
+                    ContextLineageEvent newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, ContextLineageEvent.class);
+                    createEntitiesAndRelationship(newEntityEvent);
                     break;
                 case NEW_RELATIONSHIP_EVENT:
 //                        RelationshipEvent relationshipEvent =OBJECT_MAPPER.readValue(eventAsString, RelationshipEvent.class);
@@ -73,6 +74,12 @@ public class InTopicListener implements OpenMetadataTopicListener {
         }catch (IOException e){
             log.debug(e.getMessage());
         }
+
+    }
+
+    private void createEntitiesAndRelationship(ContextLineageEvent event){
+
+        event.getProcessContext().entrySet().parallelStream().forEach(row -> graphBuilder.createEntity(row));
 
     }
 }

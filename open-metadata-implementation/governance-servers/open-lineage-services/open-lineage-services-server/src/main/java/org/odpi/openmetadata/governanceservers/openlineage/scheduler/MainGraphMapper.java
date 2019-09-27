@@ -24,7 +24,7 @@ public class MainGraphMapper {
         GraphTraversalSource main = mainGraph.traversal();
 
         final String processGuid = process.value(PROPERTY_KEY_ENTITY_GUID);
-        final String processName = process.value(PROPERTY_NAME_NAME);
+        final String processName = process.value(PROPERTY_KEY_DISPLAY_NAME);
 
         Iterator<Vertex> columnInVertex = main.V().has(PROPERTY_KEY_ENTITY_GUID, columnInGuid);
         Iterator<Vertex> columnOutVertex = main.V().has(PROPERTY_KEY_ENTITY_GUID, columnOutGuid);

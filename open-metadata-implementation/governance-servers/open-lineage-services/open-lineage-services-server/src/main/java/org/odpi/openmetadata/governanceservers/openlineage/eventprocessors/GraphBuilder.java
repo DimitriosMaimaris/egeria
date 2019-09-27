@@ -3,14 +3,9 @@
 package org.odpi.openmetadata.governanceservers.openlineage.eventprocessors;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.janusgraph.core.JanusGraph;
+import org.odpi.openmetadata.accessservices.assetlineage.Edge;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.DeletePurgedRelationshipEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.Element;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.GlossaryTerm;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.*;
 //import org.odpi.openmetadata.governanceservers.openlineage.GraphEntityMapper;
 //import org.odpi.openmetadata.governanceservers.openlineage.GraphRelationshipMapper;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
@@ -23,7 +18,6 @@ import java.util.*;
 
 import static org.odpi.openmetadata.governanceservers.openlineage.admin.OpenLineageOperationalServices.bufferGraph;
 import static org.odpi.openmetadata.governanceservers.openlineage.admin.OpenLineageOperationalServices.mainGraph;
-import static org.odpi.openmetadata.governanceservers.openlineage.util.Constants.*;
 import static org.odpi.openmetadata.governanceservers.openlineage.util.GraphConstants.*;
 
 public class GraphBuilder {
@@ -44,14 +38,15 @@ public class GraphBuilder {
     /**
      * Creates new Entities in bufferGraph related to Lineage
      *
-//     * @param entity  Entity event for creation coming from Asset Lineage OMAS
+//   * @param entity  Entity event for creation coming from Asset Lineage OMAS
+     * @param entity kj
      */
-//    public void createEntity(AssetLineageEntityEvent entity) {
-//
-//        final String methodName = "createEntity";
-//        GraphTraversalSource g = bufferGraph.traversal();
-//        Vertex vertex;
-//
+    public void createEntity(Map.Entry<String, Set<Edge>> entity) {
+
+        final String methodName = "createEntity";
+        GraphTraversalSource g = bufferGraph.traversal();
+        Vertex vertex;
+
 //        //TODO check for proxy entity
 //        Iterator<Vertex> vertexIt = g.V().hasLabel(entity.getTypeDefName()).has(PROPERTY_KEY_ENTITY_GUID, entity.getGUID());
 //
@@ -116,8 +111,8 @@ public class GraphBuilder {
 //            }
 //
 //        }
-//
-//    }
+
+    }
 
     public void removeSemanticRelationship(DeletePurgedRelationshipEvent event) {
         GraphTraversalSource g = mainGraph.traversal();

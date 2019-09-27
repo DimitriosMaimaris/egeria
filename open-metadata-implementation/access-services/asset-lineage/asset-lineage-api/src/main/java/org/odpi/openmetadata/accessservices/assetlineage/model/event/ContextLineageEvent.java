@@ -20,7 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.PUBLIC_
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         property = "class")
-public class ProcessLineageEvent extends AssetLineageEvent {
+public class ContextLineageEvent extends AssetLineageEvent {
 
    private Map<String, Set<Edge>> processContext;
 

@@ -1,14 +1,13 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Copyright Contributors to the ODPi Egeria project. */
 
-package org.odpi.openmetadata.governanceservers.openlineage.util;
+package org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineage.janusconnector.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GraphConstants {
 
-    private GraphConstants(){}
     /*
      *  Short names for core properties
      */
@@ -52,21 +51,19 @@ public class GraphConstants {
     public static final String NODE_LABEL_GLOSSARYTERM = "glossaryTerm";
     public static final String NODE_LABEL_CONDENSED = "condensedNode";
 
-    public static final String STRING = "java.lang.String";
-    protected static final Map<String,String> corePropertyTypes = new HashMap<>();
+    public static final Map<String,String> corePropertyTypes = new HashMap<String,String>() {{
+        put(PROPERTY_NAME_GUID,                           "java.lang.String");
+        put(PROPERTY_NAME_DISPLAY_NAME,                   "java.lang.String");
+        put(PROPERTY_NAME_VERSION,                        "java.lang.Long");
+        put(PROPERTY_NAME_CREATED_BY,                     "java.lang.String");
+        put(PROPERTY_NAME_CREATE_TIME,                    "java.lang.Date");
+        put(PROPERTY_NAME_UPDATED_BY,                     "java.lang.String");
+        put(PROPERTY_NAME_UPDATE_TIME,                    "java.lang.Date");
+        put(PROPERTY_NAME_LABEL,                          "java.lang.String");
+        put(PROPERTY_NAME_PROXY,                          "java.lang.Boolean");
+        put(PROPERTY_NAME_PORT_TYPE,                      "java.lang.String");
 
-    static {
-        corePropertyTypes.put(PROPERTY_NAME_GUID, STRING);
-        corePropertyTypes.put(PROPERTY_NAME_DISPLAY_NAME, STRING);
-        corePropertyTypes.put(PROPERTY_NAME_VERSION, "java.lang.Long");
-        corePropertyTypes.put(PROPERTY_NAME_CREATED_BY, STRING);
-        corePropertyTypes.put(PROPERTY_NAME_CREATE_TIME, "java.lang.Date");
-        corePropertyTypes.put(PROPERTY_NAME_UPDATED_BY, STRING);
-        corePropertyTypes.put(PROPERTY_NAME_UPDATE_TIME, "java.lang.Date");
-        corePropertyTypes.put(PROPERTY_NAME_LABEL, STRING);
-        corePropertyTypes.put(PROPERTY_NAME_PROXY, "java.lang.Boolean");
-        corePropertyTypes.put(PROPERTY_NAME_PORT_TYPE, STRING);
-    }
+    }};
 
     public static final String EDGE_LABEL_COLUMN_AND_PROCESS = "processColumn";
     public static final String EDGE_LABEL_TABLE_AND_PROCESS = "processTable";
@@ -82,6 +79,7 @@ public class GraphConstants {
     public static final String EDGE_LABEL_CONDENSED = "condensed";
 
     //Column
+//    public static final String PROPERTY_KEY_DISPLAY_NAME = "displayName";
     public static final String PROPERTY_KEY_HOST_DISPLAY_NAME = "displayname";
     public static final String PROPERTY_KEY_DATABASE_DISPLAY_NAME = "databaseDisplayname";
     public static final String PROPERTY_KEY_SCHEMA_DISPLAY_NAME = "schemaDisplayname";
@@ -109,4 +107,15 @@ public class GraphConstants {
     public static final String PROPERTY_KEY_RELATIONSHIP_UPDATE_TIME                 = PROPERTY_KEY_PREFIX_RELATIONSHIP+PROPERTY_NAME_UPDATE_TIME;
     public static final String PROPERTY_KEY_RELATIONSHIP_LABEL                       = PROPERTY_KEY_PREFIX_RELATIONSHIP+PROPERTY_NAME_LABEL;
 
+    // Map of names to property key names
+    public static final Map<String, String> corePropertiesRelationship = new HashMap<String,String>() {{
+        put(PROPERTY_NAME_GUID, PROPERTY_KEY_RELATIONSHIP_GUID);
+        put(PROPERTY_NAME_VERSION, PROPERTY_KEY_RELATIONSHIP_VERSION);
+        put(PROPERTY_NAME_CREATED_BY, PROPERTY_KEY_RELATIONSHIP_CREATED_BY);
+        put(PROPERTY_NAME_CREATE_TIME, PROPERTY_KEY_RELATIONSHIP_CREATE_TIME);
+        put(PROPERTY_NAME_UPDATED_BY, PROPERTY_KEY_RELATIONSHIP_UPDATED_BY);
+        put(PROPERTY_NAME_UPDATE_TIME, PROPERTY_KEY_RELATIONSHIP_UPDATE_TIME);
+        put(PROPERTY_NAME_LABEL, PROPERTY_KEY_RELATIONSHIP_LABEL);
+
+    }};
 }
