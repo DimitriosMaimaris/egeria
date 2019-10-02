@@ -11,12 +11,9 @@
 
     <artifactId>open-lineage-connectors</artifactId>
     <packaging>pom</packaging>
-
-
     <modules>
-<!--        <module>security-officer-tag-connector</module>-->
-        <module>janus-graph-connector</module>
-        <module>graph-connector</module>
+        <module>janus-connector</module>
+        <module>graphconnector</module>
     </modules>
 
 </project>

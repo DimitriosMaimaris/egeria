@@ -12,8 +12,6 @@ import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.apache.tinkerpop.gremlin.structure.io.graphson.GraphSONMapper;
 import org.apache.tinkerpop.gremlin.structure.io.graphson.GraphSONWriter;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.graphdb.tinkerpop.io.graphson.JanusGraphSONModuleV2d0;
 import org.odpi.openmetadata.governanceservers.openlineage.model.GraphName;
 import org.odpi.openmetadata.governanceservers.openlineage.model.Scope;
 import org.odpi.openmetadata.governanceservers.openlineage.model.View;
@@ -48,28 +46,28 @@ public class GraphServices {
      */
     public String lineage(String graphName, String scopeText, String view, String guid) {
         String response = "";
-
-        Graph graph = getJanusGraph(graphName);
-        Scope scope = Scope.fromString(scopeText);
-        switch (scope) {
-            case SOURCE_AND_DESTINATION:
-                response = sourceAndDestination(graph, view, guid);
-                break;
-            case END_TO_END:
-                response = endToEnd(graph, view, guid);
-                break;
-            case ULTIMATE_SOURCE:
-                response = ultimateSource(graph, view, guid);
-                break;
-            case ULTIMATE_DESTINATION:
-                response = ultimateDestination(graph, view, guid);
-                break;
-            case GLOSSARY:
-                response = glossary(graph, guid);
-                break;
-            default:
-                log.error(scope + " is not a valid lineage query");
-        }
+//
+//        Graph graph = getJanusGraph(graphName);
+//        Scope scope = Scope.fromString(scopeText);
+//        switch (scope) {
+//            case SOURCE_AND_DESTINATION:
+//                response = sourceAndDestination(graph, view, guid);
+//                break;
+//            case END_TO_END:
+//                response = endToEnd(graph, view, guid);
+//                break;
+//            case ULTIMATE_SOURCE:
+//                response = ultimateSource(graph, view, guid);
+//                break;
+//            case ULTIMATE_DESTINATION:
+//                response = ultimateDestination(graph, view, guid);
+//                break;
+//            case GLOSSARY:
+//                response = glossary(graph, guid);
+//                break;
+//            default:
+//                log.error(scope + " is not a valid lineage query");
+//        }
         return response;
     }
 
@@ -297,30 +295,30 @@ public class GraphServices {
         }
     }
 
-    /**
-     * Write an entire graph to disc in the Egeria root folder, in the .GraphMl format.
-     *
-     * @param graphName MAIN, BUFFER, MOCK, HISTORY.
-     */
-    public void dumpGraph(String graphName) {
-        JanusGraph graph = getJanusGraph(graphName);
-        try {
-            graph.io(IoCore.graphml()).writeGraph("graph-" + graphName + ".graphml");
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    /**
-     * Return an entire graph, in GraphSon format.
-     *
-     * @param graphName MAIN, BUFFER, MOCK, HISTORY.
-     * @return The queried graph, in graphSON format.
-     */
-    public String exportGraph(String graphName) {
-        JanusGraph graph = getJanusGraph(graphName);
-        return janusGraphToGraphson(graph);
-    }
+//    /**
+//     * Write an entire graph to disc in the Egeria root folder, in the .GraphMl format.
+//     *
+//     * @param graphName MAIN, BUFFER, MOCK, HISTORY.
+//     */
+//    public void dumpGraph(String graphName) {
+//        JanusGraph graph = getJanusGraph(graphName);
+//        try {
+//            graph.io(IoCore.graphml()).writeGraph("graph-" + graphName + ".graphml");
+//        } catch (IOException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
+//
+//    /**
+//     * Return an entire graph, in GraphSon format.
+//     *
+//     * @param graphName MAIN, BUFFER, MOCK, HISTORY.
+//     * @return The queried graph, in graphSON format.
+//     */
+//    public String exportGraph(String graphName) {
+//        JanusGraph graph = getJanusGraph(graphName);
+//        return janusGraphToGraphson(graph);
+//    }
 
     /**
      * Convert a Graph object which is originally created by a Janusgraph writer to a String in GraphSON format.
@@ -330,14 +328,14 @@ public class GraphServices {
      */
     private String janusGraphToGraphson(Graph graph) {
         OutputStream out = new ByteArrayOutputStream();
-        GraphSONMapper mapper = GraphSONMapper.build().addCustomModule(JanusGraphSONModuleV2d0.getInstance()).create();
-        GraphSONWriter writer = GraphSONWriter.build().mapper(mapper).wrapAdjacencyList(true).create();
-
-        try {
-            writer.writeGraph(out, graph);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+//        GraphSONMapper mapper = GraphSONMapper.build().addCustomModule(JanusGraphSONModuleV2d0.getInstance()).create();
+//        GraphSONWriter writer = GraphSONWriter.build().mapper(mapper).wrapAdjacencyList(true).create();
+//
+//        try {
+//            writer.writeGraph(out, graph);
+//        } catch (IOException e) {
+//            log.error(e.getMessage());
+//        }
         return out.toString();
     }
 
@@ -347,26 +345,26 @@ public class GraphServices {
      * @param graphNameText The name of the queried graph.
      * @return The Graph object.
      */
-    private JanusGraph getJanusGraph(String graphNameText) {
-        JanusGraph graph = null;
-        GraphName graphName = GraphName.fromString(graphNameText);
-        switch (graphName) {
-            case MAIN:
-                graph = mainGraph;
-                break;
-            case BUFFER:
-                graph = bufferGraph;
-                break;
-            case HISTORY:
-                graph = historyGraph;
-                break;
-            case MOCK:
-                graph = mockGraph;
-                break;
-            default:
-                log.error(graphNameText + " is not a valid graph");
-        }
-        return graph;
-    }
+//    private JanusGraph getJanusGraph(String graphNameText) {
+//        JanusGraph graph = null;
+//        GraphName graphName = GraphName.fromString(graphNameText);
+//        switch (graphName) {
+//            case MAIN:
+//                graph = mainGraph;
+//                break;
+//            case BUFFER:
+//                graph = bufferGraph;
+//                break;
+//            case HISTORY:
+//                graph = historyGraph;
+//                break;
+//            case MOCK:
+//                graph = mockGraph;
+//                break;
+//            default:
+//                log.error(graphNameText + " is not a valid graph");
+//        }
+//        return graph;
+//    }
 
 }

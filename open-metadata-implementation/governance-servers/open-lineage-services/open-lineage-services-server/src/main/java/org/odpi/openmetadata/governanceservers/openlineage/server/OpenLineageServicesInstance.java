@@ -4,17 +4,14 @@ package org.odpi.openmetadata.governanceservers.openlineage.server;
 
 
 import org.odpi.openmetadata.governanceservers.openlineage.services.GraphServices;
-import org.odpi.openmetadata.governanceservers.openlineage.mockdata.MockGraphGenerator;
 
 public class OpenLineageServicesInstance {
     private String serverName;
-    private MockGraphGenerator mockGraphGenerator;
     private GraphServices graphServices;
 
-    public OpenLineageServicesInstance(MockGraphGenerator mockGraphGenerator,
+    public OpenLineageServicesInstance(
                                        GraphServices graphServices,
                                        String serverName) {
-        this.mockGraphGenerator = mockGraphGenerator;
         this.serverName = serverName;
         this.graphServices = graphServices;
 
@@ -33,7 +30,4 @@ public class OpenLineageServicesInstance {
         OpenLineageServicesInstanceMap.removeInstanceForJVM(serverName);
     }
 
-    public MockGraphGenerator getMockGraphGenerator() {
-        return this.mockGraphGenerator;
-    }
 }

@@ -4,7 +4,6 @@ package org.odpi.openmetadata.governanceservers.openlineage.server;
 
 
 import org.odpi.openmetadata.governanceservers.openlineage.services.GraphServices;
-import org.odpi.openmetadata.governanceservers.openlineage.mockdata.MockGraphGenerator;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.exceptions.PropertyServerException;
 
@@ -34,17 +33,5 @@ class OpenLineageInstanceHandler
                 errorMessage,
                 errorCode.getSystemAction(),
                 errorCode.getUserAction());
-    }
-
-    public MockGraphGenerator mockGraphGenerator(String serverName) throws PropertyServerException {
-        OpenLineageServicesInstance instance = instanceMap.getInstance(serverName);
-
-        if (instance != null) {
-            return instance.getMockGraphGenerator();
-        } else {
-            final String methodName = "queryHandler";
-            throwError(serverName, methodName);
-            return null;
-        }
     }
 }

@@ -12,7 +12,6 @@ import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.schema.ConsistencyModifier;
 import org.janusgraph.core.schema.JanusGraphIndex;
 import org.janusgraph.core.schema.JanusGraphManagement;
-
 import org.janusgraph.core.schema.Mapping;
 import org.janusgraph.core.schema.SchemaAction;
 import org.janusgraph.core.schema.SchemaStatus;
@@ -74,21 +73,22 @@ public class GraphOMRSGraphFactory {
         // you will need to configure the component-scan otherwise Spring boot tries to autoconfigure a
         // REST client which fails (on HttpHost).
 
-        final String storageBackend = "berkeleyje";
+//        final String storageBackend = "berkeleyje";
         final String storagePath = "./egeria-graph-repository/berkeley";
-
-        final String indexBackend = "lucene";
-        final String indexPath = "./egeria-graph-repository/searchindex";
-
-        JanusGraphFactory.Builder config = JanusGraphFactory.build().
-                set("storage.backend", storageBackend).
-                set("storage.directory", storagePath).
-                set("index.search.backend", indexBackend).
-                set("index.search.directory", indexPath);
+//
+//        final String indexBackend = "lucene";
+//        final String indexPath = "./egeria-graph-repository/searchindex";
+//
+//        JanusGraphFactory.Builder config = JanusGraphFactory.build().
+//                set("storage.backend", storageBackend).
+//                set("storage.directory", storagePath).
+//                set("index.search.backend", indexBackend).
+//                set("index.search.directory", indexPath);
 
         try {
 
-            graph = config.open();
+//            graph = config.open();
+            graph = JanusGraphFactory.open("/Users/wf40wc/Developer/janus-to-cassandra.properties");
 
         } catch (Exception e) {
             log.error("{} could not open graph stored at {}", methodName, storagePath);
@@ -186,6 +186,7 @@ public class GraphOMRSGraphFactory {
                     // Update the lastOpenDate
                     now = new Date();
                     controlVertex.property("lastOpenDate", now);
+                    g.tx().commit();
                     success = true;
 
                 } catch (Exception e) {
@@ -215,7 +216,7 @@ public class GraphOMRSGraphFactory {
 
             try {
                 success = checkAndUpdateControlInformation(controlVertex, storagePath);
-
+                g.tx().commit();
             }
             catch (RepositoryErrorException e) {
                 log.error("{} Check and update of control vertex failed, exception {}", methodName, e.getMessage());

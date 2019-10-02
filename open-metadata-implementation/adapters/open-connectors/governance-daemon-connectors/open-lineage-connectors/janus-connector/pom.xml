@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- Copyright Contributors to the ODPi Egeria project. -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
-        <artifactId>open-metadata-collection-store-connectors</artifactId>
+        <artifactId>open-lineage-connectors</artifactId>
         <groupId>org.odpi.egeria</groupId>
         <version>1.1-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Graph Repository Connector</name>
-    <description>
-        Graph Repository provides a local repository that uses a graph store as its persistence store.
-    </description>
-
-    <artifactId>graph-repository-connector</artifactId>
-
-    <properties>
-        <janus.version>0.3.1</janus.version>
-    </properties>
-
+    <artifactId>janus-graph-connector</artifactId>
     <dependencies>
+
         <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-core</artifactId>
@@ -34,13 +19,13 @@
 
         <!-- berkeley & lucene aren't compile dependencies, so need exception for maven dependency plugin -->
         <!--<dependency>-->
-            <!--<groupId>org.janusgraph</groupId>-->
-            <!--<artifactId>janusgraph-berkeleyje</artifactId>-->
+        <!--<groupId>org.janusgraph</groupId>-->
+        <!--<artifactId>janusgraph-berkeleyje</artifactId>-->
         <!--</dependency>-->
 
         <!--<dependency>-->
-            <!--<groupId>org.janusgraph</groupId>-->
-            <!--<artifactId>janusgraph-lucene</artifactId>-->
+        <!--<groupId>org.janusgraph</groupId>-->
+        <!--<artifactId>janusgraph-lucene</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
@@ -69,11 +54,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.odpi.egeria</groupId>
             <artifactId>open-connector-framework</artifactId>
@@ -82,7 +62,7 @@
         <dependency>
             <groupId>org.apache.tinkerpop</groupId>
             <artifactId>gremlin-core</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>commons-logging</groupId>
@@ -103,7 +83,14 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.odpi.egeria</groupId>
+            <artifactId>repository-services-apis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.odpi.egeria</groupId>
+            <artifactId>repository-services-apis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -120,10 +107,8 @@
                         <configuration>
                             <ignoredUnusedDeclaredDependencies combine.children="append">
                                 <!-- Runtime dependencies for janusgraph-->
-                                <!--<ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-berkeleyje:*</ignoredUnusedDeclaredDependency>-->
-                                <!--<ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-lucene:*</ignoredUnusedDeclaredDependency>-->
-                                <ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-cql:*</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-es:*</ignoredUnusedDeclaredDependency>
+                                <ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-cql:*</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.janusgraph:janusgraph-cassandra:*</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>commons-logging:commons-logging:*</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>commons-codec:commons-codec:*</ignoredUnusedDeclaredDependency>

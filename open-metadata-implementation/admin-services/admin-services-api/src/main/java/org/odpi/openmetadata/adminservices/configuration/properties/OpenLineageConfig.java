@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.odpi.openmetadata.frameworks.connectors.properties.beans.Connection;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
@@ -28,6 +30,16 @@ public class OpenLineageConfig extends AdminServicesConfigHeader {
     private String inTopicName;
     private Connection inTopicConnection;
 
+    private String bufferGraph;
+    private String mainGraph;
+    private String storageBackend;
+    private List<String> storageHostanmes;
+    private String indexBackend;
+    private String indexHostanme;
+    private String usernameBackend;
+    private char[] passwordBackend;
+    private String usernameIndex;
+    private char[] passwordIndex;
 
     /**
      * Default constructor
@@ -168,6 +180,85 @@ public class OpenLineageConfig extends AdminServicesConfigHeader {
     }
 
 
+    public String getBufferGraph() {
+        return bufferGraph;
+    }
+
+    public void setBufferGraph(String bufferGraph) {
+        this.bufferGraph = bufferGraph;
+    }
+
+    public String getMainGraph() {
+        return mainGraph;
+    }
+
+    public void setMainGraph(String mainGraph) {
+        this.mainGraph = mainGraph;
+    }
+
+    public String getStorageBackend() {
+        return storageBackend;
+    }
+
+    public void setStorageBackend(String storageBackend) {
+        this.storageBackend = storageBackend;
+    }
+
+    public List<String> getStorageHostanmes() {
+        return storageHostanmes;
+    }
+
+    public void setStorageHostanmes(List<String> storageHostanmes) {
+        this.storageHostanmes = storageHostanmes;
+    }
+
+    public String getIndexBackend() {
+        return indexBackend;
+    }
+
+    public void setIndexBackend(String indexBackend) {
+        this.indexBackend = indexBackend;
+    }
+
+    public String getIndexHostanme() {
+        return indexHostanme;
+    }
+
+    public void setIndexHostanme(String indexHostanme) {
+        this.indexHostanme = indexHostanme;
+    }
+
+    public String getUsernameBackend() {
+        return usernameBackend;
+    }
+
+    public void setUsernameBackend(String usernameBackend) {
+        this.usernameBackend = usernameBackend;
+    }
+
+    public char[] getPasswordBackend() {
+        return passwordBackend;
+    }
+
+    public void setPasswordBackend(char[] passwordBackend) {
+        this.passwordBackend = passwordBackend;
+    }
+
+    public String getUsernameIndex() {
+        return usernameIndex;
+    }
+
+    public void setUsernameIndex(String usernameIndex) {
+        this.usernameIndex = usernameIndex;
+    }
+
+    public char[] getPasswordIndex() {
+        return passwordIndex;
+    }
+
+    public void setPasswordIndex(char[] passwordIndex) {
+        this.passwordIndex = passwordIndex;
+    }
 
     @Override
     public String toString() {
@@ -178,41 +269,84 @@ public class OpenLineageConfig extends AdminServicesConfigHeader {
                 ", lineageServerURL='" + lineageServerURL + '\'' +
                 ", inTopicName='" + inTopicName + '\'' +
                 ", inTopicConnection=" + inTopicConnection +
+                ", bufferGraph='" + bufferGraph + '\'' +
+                ", mainGraph='" + mainGraph + '\'' +
+                ", storageBackend='" + storageBackend + '\'' +
+                ", storageHostanmes=" + storageHostanmes +
+                ", indexBackend='" + indexBackend + '\'' +
+                ", indexHostanme='" + indexHostanme + '\'' +
+                ", usernameBackend='" + usernameBackend + '\'' +
+                ", passwordBackend=" + Arrays.toString(passwordBackend) +
+                ", usernameIndex='" + usernameIndex + '\'' +
+                ", passwordIndex=" + Arrays.toString(passwordIndex) +
                 '}';
     }
 
-    /**
-     * Validate that an object is equal depending on their stored values.
-     *
-     * @param objectToCompare object
-     * @return boolean result
-     */
     @Override
-    public boolean equals(Object objectToCompare) {
-        if (this == objectToCompare) {
-            return true;
-        }
-        if (objectToCompare == null || getClass() != objectToCompare.getClass()) {
-            return false;
-        }
-        OpenLineageConfig that = (OpenLineageConfig) objectToCompare;
-        return getOpenLineageId() == that.getOpenLineageId() &&
-                Objects.equals(getOpenLineageName(), that.getOpenLineageName()) &&
-                Objects.equals(getOpenLineageDescription(), that.getOpenLineageDescription()) &&
-                Objects.equals(getLineageServerURL(), that.getLineageServerURL()) &&
-                Objects.equals(getInTopicConnection(), that.getInTopicConnection()) &&
-                Objects.equals(getInTopicName(), that.getInTopicName());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OpenLineageConfig that = (OpenLineageConfig) o;
+        return openLineageId == that.openLineageId &&
+                Objects.equals(openLineageName, that.openLineageName) &&
+                Objects.equals(openLineageDescription, that.openLineageDescription) &&
+                Objects.equals(lineageServerURL, that.lineageServerURL) &&
+                Objects.equals(inTopicName, that.inTopicName) &&
+                Objects.equals(inTopicConnection, that.inTopicConnection) &&
+                Objects.equals(bufferGraph, that.bufferGraph) &&
+                Objects.equals(mainGraph, that.mainGraph) &&
+                Objects.equals(storageBackend, that.storageBackend) &&
+                Objects.equals(storageHostanmes, that.storageHostanmes) &&
+                Objects.equals(indexBackend, that.indexBackend) &&
+                Objects.equals(indexHostanme, that.indexHostanme) &&
+                Objects.equals(usernameBackend, that.usernameBackend) &&
+                Arrays.equals(passwordBackend, that.passwordBackend) &&
+                Objects.equals(usernameIndex, that.usernameIndex) &&
+                Arrays.equals(passwordIndex, that.passwordIndex);
     }
 
-    /**
-     * Return a hash code based on the values of this object.
-     *
-     * @return in hash code
-     */
     @Override
     public int hashCode() {
-        return Objects.hash(getOpenLineageId(), getOpenLineageName(),
-                getOpenLineageDescription(),  getLineageServerURL(), getInTopicConnection(),
-                getInTopicName());
+        int result = Objects.hash(openLineageId, openLineageName, openLineageDescription, lineageServerURL, inTopicName, inTopicConnection, bufferGraph, mainGraph, storageBackend, storageHostanmes, indexBackend, indexHostanme, usernameBackend, usernameIndex);
+        result = 31 * result + Arrays.hashCode(passwordBackend);
+        result = 31 * result + Arrays.hashCode(passwordIndex);
+        return result;
     }
+
+    //    /**
+//     * Validate that an object is equal depending on their stored values.
+//     *
+//     * @param objectToCompare object
+//     * @return boolean result
+//     */
+//    @Override
+//    public boolean equals(Object objectToCompare) {
+//        if (this == objectToCompare) {
+//            return true;
+//        }
+//        if (objectToCompare == null || getClass() != objectToCompare.getClass()) {
+//            return false;
+//        }
+//        OpenLineageConfig that = (OpenLineageConfig) objectToCompare;
+//        return getOpenLineageId() == that.getOpenLineageId() &&
+//                Objects.equals(getOpenLineageName(), that.getOpenLineageName()) &&
+//                Objects.equals(getOpenLineageDescription(), that.getOpenLineageDescription()) &&
+//                Objects.equals(getLineageServerURL(), that.getLineageServerURL()) &&
+//                Objects.equals(getInTopicConnection(), that.getInTopicConnection()) &&
+//                Objects.equals(getInTopicName(), that.getInTopicName());
+//    }
+//
+//
+//
+//    /**
+//     * Return a hash code based on the values of this object.
+//     *
+//     * @return in hash code
+//     */
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getOpenLineageId(), getOpenLineageName(),
+//                getOpenLineageDescription(),  getLineageServerURL(), getInTopicConnection(),
+//                getInTopicName());
+//    }
 }

@@ -56,30 +56,33 @@ public class InTopicListener implements OpenMetadataTopicListener {
                     e);
         }
 
-        try {
+//        try {
             switch (event.getOmrsInstanceEventType()) {
                 case NEW_ENTITY_EVENT:
-                    ContextLineageEvent newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, ContextLineageEvent.class);
-                    createEntitiesAndRelationship(newEntityEvent);
+//                    ContextLineageEvent newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, ContextLineageEvent.class);
+//                    createEntitiesAndRelationship(newEntityEvent);
+                    graphBuilder.createEntity();
                     break;
                 case NEW_RELATIONSHIP_EVENT:
+                    graphBuilder.createEntity();
+
 //                        RelationshipEvent relationshipEvent =OBJECT_MAPPER.readValue(eventAsString, RelationshipEvent.class);
 //                    graphBuilder.createRelationship(relationshipEvent);
                     break;
-                case DELETE_PURGED_RELATIONSHIP_EVENT:
-                         DeletePurgedRelationshipEvent deletePurgedRelationshipEvent =OBJECT_MAPPER.readValue(eventAsString, DeletePurgedRelationshipEvent.class);
-                         graphBuilder.removeSemanticRelationship(deletePurgedRelationshipEvent);
-                    break;
+//                case DELETE_PURGED_RELATIONSHIP_EVENT:
+//                         DeletePurgedRelationshipEvent deletePurgedRelationshipEvent =OBJECT_MAPPER.readValue(eventAsString, DeletePurgedRelationshipEvent.class);
+//                         graphBuilder.removeSemanticRelationship(deletePurgedRelationshipEvent);
+//                    break;
             }
-        }catch (IOException e){
-            log.debug(e.getMessage());
-        }
+//        }catch (IOException e){
+//            log.debug(e.getMessage());
+//        }
 
     }
 
     private void createEntitiesAndRelationship(ContextLineageEvent event){
 
-        event.getProcessContext().entrySet().parallelStream().forEach(row -> graphBuilder.createEntity(row));
+//        event.getProcessContext().entrySet().parallelStream().forEach(row -> graphBuilder.createEntity(row));
 
     }
 }
