@@ -129,12 +129,12 @@ public class CommonHandler {
             return repositoryHandler.getEntityByGUID(userId,
                                                      relationship.getEntityTwoProxy().getGUID(),
                                                      GUID_PARAMETER,
-                                      "Any entity type", methodName);
+                    relationship.getEntityTwoProxy().getType().getTypeDefName(), methodName);
         } else {
             return repositoryHandler.getEntityByGUID(userId,
                                                      relationship.getEntityOneProxy().getGUID(),
                                                      GUID_PARAMETER,
-                                      "Any entity type", methodName);
+                    relationship.getEntityOneProxy().getType().getTypeDefName(), methodName);
         }
     }
 

@@ -117,8 +117,10 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
                     case NEW_ENTITY_EVENT:
                         processNewEntityEvent(instanceEvent.getEntity(), serviceOperationName);
                         break;
+                    case UPDATED_ENTITY_EVENT:
+                        processNewEntityEvent(instanceEvent.getEntity(), serviceOperationName);
                     case NEW_RELATIONSHIP_EVENT:
-                        processRelationship(instanceEvent.getRelationship(), serviceOperationName);
+//                        processRelationship(instanceEvent.getRelationship(), serviceOperationName);
                         break;
 //                  case DELETE_PURGED_RELATIONSHIP_EVENT:
 //                        processDeletedPurgedRelationship(instanceEvent.getRelationship(), serviceOperationName);
@@ -204,7 +206,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         String technicalGuid = entityDetail.getGUID();
 
         ContextHandler newContextHandler = instanceHandler.getContextHandler(serverUserName,serverName,serviceOperationName);
-        AssetContext assetContext = newContextHandler.getAssetContext(serverName,serverUserName,technicalGuid);
+        AssetContext assetContext = newContextHandler.getAssetContext(serverName,serverUserName,technicalGuid,entityDetail.getType().getTypeDefName());
 
         GlossaryHandler glossaryHandler = instanceHandler.getGlossaryHandler(serverUserName,serverName,serviceOperationName);
         Map<String,Set<Edge>> context =  glossaryHandler.getGlossaryTerm(technicalGuid,serviceOperationName,entityDetail,assetContext);
@@ -283,7 +285,7 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
     }
 
     private boolean isValidEntityEvent(String typeDefName) {
-        final List<String> types = Arrays.asList(PROCESS, GLOSSARY_TERM,TABULAR_SCHEMA_TYPE, TABULAR_COLUMN, RELATIONAL_COLUMN, RELATIONAL_TABLE, DATA_FILE);
+        final List<String> types = Arrays.asList(PROCESS, GLOSSARY_TERM, TABULAR_COLUMN, RELATIONAL_COLUMN, RELATIONAL_TABLE, DATA_FILE);
         return types.contains(typeDefName);
     }
 

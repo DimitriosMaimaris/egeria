@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.AssetLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.AssetLineageEntityEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.DeletePurgedRelationshipEvent;
+import org.odpi.openmetadata.accessservices.assetlineage.model.event.ProcessLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
 import org.odpi.openmetadata.governanceservers.openlineage.services.GraphStoringServices;
@@ -38,10 +39,10 @@ public class InTopicListener implements OpenMetadataTopicListener {
      */
     @Override
     public void processEvent(String eventAsString) {
-        AssetLineageEvent event = null;
+        ProcessLineageEvent event = null;
         graphStoringServices.test();
         try {
-            event = OBJECT_MAPPER.readValue(eventAsString, AssetLineageEvent.class);
+            event = OBJECT_MAPPER.readValue(eventAsString, ProcessLineageEvent.class);
             log.info("Started processing OpenLineageEvent");
         } catch (Exception e) {
             log.error("Exception processing event from in topic", e);
