@@ -7,10 +7,12 @@ package org.odpi.openmetadata.accessservices.assetlineage.outtopic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.AssetLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.ffdc.AssetLineageErrorCode;
+import org.odpi.openmetadata.accessservices.assetlineage.model.event.ProcessLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.adminservices.ffdc.exception.OMAGConfigurationErrorException;
 import org.odpi.openmetadata.frameworks.connectors.Connector;
 import org.odpi.openmetadata.frameworks.connectors.ConnectorBroker;
+import org.odpi.openmetadata.frameworks.connectors.properties.beans.Asset;
 import org.odpi.openmetadata.frameworks.connectors.properties.beans.Connection;
 import org.odpi.openmetadata.repositoryservices.auditlog.OMRSAuditLog;
 import org.odpi.openmetadata.repositoryservices.connectors.openmetadatatopic.OpenMetadataTopicConnector;
@@ -46,10 +48,11 @@ public class AssetLineagePublisher {
      *
      * @param event event to send
      */
-    public void publishRelationshipEvent(AssetLineageEvent event) {
+    public void publishRelationshipEvent(ProcessLineageEvent event) {
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             if (connector != null) {
-                connector.sendEvent(this.getJSONPayload(event));
+                connector.sendEvent(objectMapper.writeValueAsString(event));
             }
         } catch (Throwable error) {
             log.error("Unable to publish new asset event: " + event.toString() + "; error was " + error.toString());
@@ -90,29 +93,6 @@ public class AssetLineagePublisher {
                     errorCode.getUserAction(),
                     error);
         }
-    }
-
-
-    /**
-     * Return the event as a String where the field contents are encoded in JSON.   The event beans
-     * contain annotations that mean the whole event, down to the lowest subclass, is serialized.
-     *
-     * @return JSON payload (as String)
-     */
-    private String getJSONPayload(AssetLineageEvent event) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = null;
-
-        /*
-         * This class
-         */
-        try {
-            jsonString = objectMapper.writeValueAsString(event);
-        } catch (Throwable error) {
-            log.error("Unable to create event payload: " + error.toString());
-        }
-
-        return jsonString;
     }
 
 }

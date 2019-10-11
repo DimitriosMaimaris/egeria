@@ -205,7 +205,7 @@ public class OpenLineageOperationalServices {
         auditLog.logRecord(actionDescription,
                            auditCode.getLogMessageId(),
                            OMRSAuditLogRecordSeverity.INFO,
-                           auditCode.getFormattedLogMessage("Openlineage"),
+                           auditCode.getFormattedLogMessage(auditCode.getLogMessage()),
                         null,
                            auditCode.getSystemAction(),
                            auditCode.getUserAction());

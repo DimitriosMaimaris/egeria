@@ -162,7 +162,7 @@ public class CommonHandler {
         graph.addVertex(startVertex);
         graph.addVertex(endVertex);
 
-        Edge edge = new Edge(relationship.getType().getTypeDefName(), startVertex, endVertex);
+        Edge edge = new Edge(relationship.getType().getTypeDefName(),relationship.getGUID(),startVertex, endVertex);
         graph.addEdge(edge);
 
         return endEntity;

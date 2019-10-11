@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Copyright Contributors to the ODPi Egeria project. */
-package org.odpi.openmetadata.accessservices.assetlineage;
+package org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.ffdc;
 
 
 import java.util.Date;
@@ -81,7 +81,6 @@ public class LineageEntity {
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
-
 
     @Override
     public boolean equals(Object o) {

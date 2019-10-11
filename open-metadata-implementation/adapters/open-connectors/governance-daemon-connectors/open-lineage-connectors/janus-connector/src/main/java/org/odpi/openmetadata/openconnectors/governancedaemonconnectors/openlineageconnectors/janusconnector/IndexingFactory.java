@@ -48,11 +48,9 @@ public class IndexingFactory {
                 log.info("{} index {} already exists", methodName, indexName);
                 management.rollback();
                 return;
-            } else {
-                // index does not already exist - create
-                log.info("{} index create {} for vertex property {}", methodName, indexName, propertyKeyName);
             }
 
+            log.info("{} index create {} for vertex property {}", methodName, indexName, propertyKeyName);
 
             // Check whether property key exists (e.g. edge also has a "guid" property) and if not create it...
             PropertyKey propertyKey;

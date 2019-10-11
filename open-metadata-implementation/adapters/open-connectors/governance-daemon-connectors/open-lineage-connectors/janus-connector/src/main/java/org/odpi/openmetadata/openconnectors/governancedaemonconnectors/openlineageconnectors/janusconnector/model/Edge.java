@@ -1,23 +1,21 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 /* Copyright Contributors to the ODPi Egeria project. */
-package org.odpi.openmetadata.accessservices.assetlineage;
+package org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model;
+
+import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.ffdc.LineageEntity;
 
 import java.util.Objects;
 
 public class Edge {
 
     private String relationshipType;
-    private String relationshipGuid;
     private LineageEntity fromVertex;
     private LineageEntity toVertex;
 
-    public Edge(){};
-
-    public  Edge(String relationshipType,String relationshipGuid, LineageEntity fromVertex, LineageEntity toVertex) {
+   public Edge(String relationshipType, LineageEntity fromVertex, LineageEntity toVertex) {
        this.relationshipType = relationshipType;
-       this.relationshipGuid = relationshipGuid;
-       this.fromVertex = fromVertex;
-       this.toVertex = toVertex;
+        this.fromVertex = fromVertex;
+        this.toVertex = toVertex;
     }
 
     public String getRelationshipType() {
@@ -26,14 +24,6 @@ public class Edge {
 
     public void setRelationshipType(String relationshipType) {
         this.relationshipType = relationshipType;
-    }
-
-    public String getRelationshipGuid() {
-        return relationshipGuid;
-    }
-
-    public void setRelationshipGuid(String relationshipGuid) {
-        this.relationshipGuid = relationshipGuid;
     }
 
     public LineageEntity getFromVertex() {
@@ -50,15 +40,6 @@ public class Edge {
 
     public void setToVertex(LineageEntity toVertex) {
         this.toVertex = toVertex;
-    }
-
-    @Override
-    public String toString() {
-        return "Edge{" +
-                "relationshipType='" + relationshipType + '\'' +
-                ", fromVertex=" + fromVertex +
-                ", toVertex=" + toVertex +
-                '}';
     }
 
     @Override

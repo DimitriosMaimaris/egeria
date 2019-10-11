@@ -195,8 +195,10 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         Map<String, Set<Edge>>  processContext = processHandler.getProcessContext(serverUserName, entityDetail.getGUID());
 
         ProcessLineageEvent event = new ProcessLineageEvent();
-        event.setProcessContext(processContext);
-
+        event.setContext(processContext);
+        event.setAssetLineageEntityEvent(AssetLineageEventType.NEW_PROCESS);
+//        event.setEventVersionId(entityDetail.getVersion());
+//        event.setOmrsInstanceEventType(OMRSInstanceEventType.NEW_ENTITY_EVENT);
         publisher.publishRelationshipEvent(event);
     }
 
@@ -214,11 +216,11 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
 
         ProcessLineageEvent event = new ProcessLineageEvent();
         if(context.size() != 0){
-            event.setProcessContext(context);
+            event.setContext(context);
         }
         else
         {
-            event.setProcessContext(assetContext.getNeighbors());
+            event.setContext(assetContext.getNeighbors());
         }
 
 
@@ -234,55 +236,30 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
 //        return glossaryHandler.getGlossaryTerm(guid, typeDefName, serverUserName);
 //    }
 
-    /**
-     * @param relationship         - details of the new relationship
-     * @param serviceOperationName name of the calling operation
-     */
-    public void processRelationship(Relationship relationship,
-                                    String serviceOperationName) {
-
-        if (!isValidRelationshipEvent(relationship))
-            log.info("Event is ignored as the relationship is not a semantic assignment for a column or table");
-        else {
-            log.info("Processing semantic assignment relationship event");
-
-            final List<String> types = Arrays.asList(PROCESS_PORT, PORT_DELEGATION, PORT_SCHEMA, SCHEMA_TYPE, SCHEMA_ATTRIBUTE_TYPE, ATTRIBUTE_FOR_SCHEMA, LINEAGE_MAPPING);
-
-            if (types.contains(relationship.getType().getTypeDefName())) {
-                processRelationships(relationship);
-
-            } else {
-                processSemanticAssignment(relationship, serviceOperationName);
-
-            }
-        }
-
-    }
-
-    private void processRelationships(Relationship relationship) {
-
-        RelationshipEvent relationshipEvent = new RelationshipEvent();
-        Map<String, AssetLineageEntityEvent> proxies = new HashMap<>();
-
-        EntityProxy proxyOne = relationship.getEntityOneProxy();
-        EntityProxy proxyTwo = relationship.getEntityTwoProxy();
-
-        proxies.put("EntityProxyOne", proxyToNewEntity(proxyOne));
-        proxies.put("EntityProxyTwo", proxyToNewEntity(proxyTwo));
-
-        relationshipEvent.setProxies(proxies);
-        relationshipEvent.setTypeDefName(relationship.getType().getTypeDefName());
-        relationshipEvent.setGUID(relationship.getGUID());
-        relationshipEvent.setCreatedBy(relationship.getCreatedBy());
-        relationshipEvent.setCreateTime(relationship.getCreateTime());
-        relationshipEvent.setUpdatedBy(relationship.getUpdatedBy());
-        relationshipEvent.setUpdateTime(relationship.getUpdateTime());
-        relationshipEvent.setVersion(relationship.getVersion());
-        relationshipEvent.setOmrsInstanceEventType(OMRSInstanceEventType.NEW_RELATIONSHIP_EVENT);
-
-        publisher.publishRelationshipEvent(relationshipEvent);
-
-    }
+//    /**
+//     * @param relationship         - details of the new relationship
+//     * @param serviceOperationName name of the calling operation
+//     */
+//    public void processRelationship(Relationship relationship,
+//                                    String serviceOperationName) {
+//
+//        if (!isValidRelationshipEvent(relationship))
+//            log.info("Event is ignored as the relationship is not a semantic assignment for a column or table");
+//        else {
+//            log.info("Processing semantic assignment relationship event");
+//
+//            final List<String> types = Arrays.asList(PROCESS_PORT, PORT_DELEGATION, PORT_SCHEMA, SCHEMA_TYPE, SCHEMA_ATTRIBUTE_TYPE, ATTRIBUTE_FOR_SCHEMA, LINEAGE_MAPPING);
+//
+//            if (types.contains(relationship.getType().getTypeDefName())) {
+//                processRelationships(relationship);
+//
+//            } else {
+//                processSemanticAssignment(relationship, serviceOperationName);
+//
+//            }
+//        }
+//
+//    }
 
     private boolean isValidEntityEvent(String typeDefName) {
         final List<String> types = Arrays.asList(PROCESS, GLOSSARY_TERM, TABULAR_COLUMN, RELATIONAL_COLUMN, RELATIONAL_TABLE, DATA_FILE);
@@ -313,82 +290,4 @@ public class AssetLineageOMRSTopicListener implements OMRSTopicListener {
         return types.contains(relationship.getType().getTypeDefName());
     }
 
-
-    /**
-     * Takes the entities of the the relationship and builds the context for entityOneProxy
-     * and publishes an event.
-     *
-     * @param relationship - details of the new relationship
-     */
-    private void processSemanticAssignment(Relationship relationship,
-                                           String serviceOperationName) {
-
-    }
-
-    private void processDeletedPurgedRelationship(Relationship relationship, String serviceOperationName) {
-
-        if (!isValidRelationshipEvent(relationship))
-            log.info("Event is ignored as the relationship is not a semantic assignment for a column or table");
-        else {
-            log.info("Processing semantic assignment deletion relationship event");
-            processSemanticAssignmentDeletion(relationship, serviceOperationName);
-
-        }
-    }
-
-    private void processUpdatedEntityEvent(EntityDetail originalEntity, EntityDetail entity) {
-    }
-
-    private void processDeletedEntity(EntityDetail entity) {
-    }
-
-
-    /**
-     * Takes the entities of the the relationship, extracts the relevant types
-     * and publishes an event for deletion.
-     *
-     * @param relationship - details of the new relationship
-     * @return
-     */
-    private void processSemanticAssignmentDeletion(Relationship relationship, String serviceOperationName) {
-        DeletePurgedRelationshipEvent deletionEvent = new DeletePurgedRelationshipEvent();
-
-        GlossaryHandler glossaryHandler = null;
-        try {
-            glossaryHandler = instanceHandler.getGlossaryHandler(serverUserName, serverName, serviceOperationName);
-        } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
-            log.error("Retrieving glossaryHandler for the access setvice failed. Exception message is {}", e.getMessage());
-            throw new AssetLineageException(e.getReportedHTTPCode(), e.getReportingClassName(), e.getReportingActionDescription(), e.getErrorMessage(), e.getReportedSystemAction(), e.getReportedUserAction());
-
-        }
-
-//        GlossaryTerm glossaryTerm = glossaryHandler.getGlossaryTerm(relationship.getEntityTwoProxy(), serverUserName);
-
-//        deletionEvent.setGlossaryTerm(glossaryTerm);
-        deletionEvent.setEntityGuid(relationship.getEntityOneProxy().getGUID());
-        deletionEvent.setEntityTypeDef(relationship.getEntityOneProxy().getType().getTypeDefName());
-        deletionEvent.setOmrsInstanceEventType(OMRSInstanceEventType.DELETE_PURGED_RELATIONSHIP_EVENT);
-
-        publisher.publishRelationshipEvent(deletionEvent);
-    }
-
-    private AssetLineageEntityEvent proxyToNewEntity(EntityProxy proxy) {
-
-        final String methodName = "proxyToNewEntity";
-        AssetLineageEntityEvent assetLineageEntityEvent = new AssetLineageEntityEvent();
-        Map<String, Object> properties = new HashMap<>();
-
-        properties.put("qualifiedName", repositoryHelper.getStringProperty(ASSET_LINEAGE_OMAS, "qualifiedName",
-                proxy.getUniqueProperties(), methodName));
-
-        assetLineageEntityEvent.setProperties(properties);
-        assetLineageEntityEvent.setGUID(proxy.getGUID());
-        assetLineageEntityEvent.setTypeDefName(proxy.getType().getTypeDefName());
-        assetLineageEntityEvent.setCreateTime(proxy.getCreateTime());
-        assetLineageEntityEvent.setCreatedBy(proxy.getCreatedBy());
-
-        assetLineageEntityEvent.setVersion(proxy.getVersion());
-
-        return assetLineageEntityEvent;
-    }
 }

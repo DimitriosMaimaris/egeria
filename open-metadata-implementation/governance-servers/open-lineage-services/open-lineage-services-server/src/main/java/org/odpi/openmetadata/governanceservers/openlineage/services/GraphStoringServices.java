@@ -2,9 +2,13 @@
 /* Copyright Contributors to the ODPi Egeria project. */
 package org.odpi.openmetadata.governanceservers.openlineage.services;
 
+import org.odpi.openmetadata.accessservices.assetlineage.Edge;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.GraphStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
 
 public class GraphStoringServices {
 
@@ -17,6 +21,11 @@ public class GraphStoringServices {
     }
 
     public void test(){
-        graphStore.addEntity();
+        graphStore.test();
     }
+
+    public void addEntity(Map<String, Set<Edge>> context){
+        graphStore.addEntity(context);
+    }
+
 }

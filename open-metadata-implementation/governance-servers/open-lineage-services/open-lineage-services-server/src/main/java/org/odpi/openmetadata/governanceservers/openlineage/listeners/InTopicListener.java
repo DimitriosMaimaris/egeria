@@ -3,11 +3,11 @@
 package org.odpi.openmetadata.governanceservers.openlineage.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.odpi.openmetadata.accessservices.assetlineage.Edge;
 import org.odpi.openmetadata.accessservices.assetlineage.model.assetContext.AssetLineageEvent;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.AssetLineageEntityEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.DeletePurgedRelationshipEvent;
+import org.odpi.openmetadata.accessservices.assetlineage.model.event.AssetLineageEventType;
 import org.odpi.openmetadata.accessservices.assetlineage.model.event.ProcessLineageEvent;
-import org.odpi.openmetadata.accessservices.assetlineage.model.event.RelationshipEvent;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.ffdc.OpenLineageErrorCode;
 import org.odpi.openmetadata.governanceservers.openlineage.services.GraphStoringServices;
 import org.odpi.openmetadata.repositoryservices.auditlog.OMRSAuditLog;
@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class InTopicListener implements OpenMetadataTopicListener {
 
@@ -58,22 +61,35 @@ public class InTopicListener implements OpenMetadataTopicListener {
                     e);
         }
 
+//        try {
+//            switch (event.getOmrsInstanceEventType()) {
+//                case NEW_ENTITY_EVENT:
+
+        ProcessLineageEvent newEntityEvent = null;
         try {
-            switch (event.getOmrsInstanceEventType()) {
-                case NEW_ENTITY_EVENT:
-                    AssetLineageEntityEvent newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, AssetLineageEntityEvent.class);
-                    break;
-                case NEW_RELATIONSHIP_EVENT:
-                        RelationshipEvent relationshipEvent =OBJECT_MAPPER.readValue(eventAsString, RelationshipEvent.class);
-                    break;
-                case DELETE_PURGED_RELATIONSHIP_EVENT:
-                         DeletePurgedRelationshipEvent deletePurgedRelationshipEvent =OBJECT_MAPPER.readValue(eventAsString, DeletePurgedRelationshipEvent.class);
-                    break;
-            }
-        }catch (IOException e){
-            log.debug(e.getMessage());
+//            if(event.getAssetLineageEntityEvent().equals(AssetLineageEventType.NEW_PROCESS)){
+                newEntityEvent = OBJECT_MAPPER.readValue(eventAsString, ProcessLineageEvent.class);
+
+                    graphStoringServices.addEntity(newEntityEvent.getContext());
+
+
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+//                    break;
+//                case NEW_RELATIONSHIP_EVENT:
+//                      NEW_RELATIONSHIP_EVENTT  RelationshipEvent relationshipEvent =OBJECT_MAPPER.readValue(eventAsString, RelationshipEvent.class);
+//                    break;
+//                case DELETE_PURGED_RELATIONSHIP_EVENT:
+//                         DeletePurgedRelationshipEvent deletePurgedRelationshipEvent =OBJECT_MAPPER.readValue(eventAsString, DeletePurgedRelationshipEvent.class);
+//                    break;
+//            }
+//        }catch (IOException e){
+//            log.debug(e.getMessage());
+//        }
 
     }
+
 }
 
