@@ -88,7 +88,7 @@ public class CommonHandler {
                                                                                                         PropertyServerException{
         final String methodName = "getRelationshipByType";
         String typeGuid = getTypeName(userId, relationshipType);
-
+        log.debug("trying to find relationship for asset with guid {} and the type of {}",assetGuid,relationshipType);
         List<Relationship> relationships = repositoryHandler.getRelationshipsByType(userId,
                                                                                     assetGuid,
                                                                                     typeDefName,

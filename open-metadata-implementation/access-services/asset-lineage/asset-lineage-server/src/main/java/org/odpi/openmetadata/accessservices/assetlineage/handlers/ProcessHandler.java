@@ -4,7 +4,6 @@ package org.odpi.openmetadata.accessservices.assetlineage.handlers;
 
 import org.odpi.openmetadata.accessservices.assetlineage.AssetContext;
 import org.odpi.openmetadata.accessservices.assetlineage.GraphContext;
-import org.odpi.openmetadata.accessservices.assetlineage.LineageEntity;
 import org.odpi.openmetadata.accessservices.assetlineage.ffdc.exception.AssetLineageException;
 import org.odpi.openmetadata.commonservices.ffdc.InvalidParameterHandler;
 import org.odpi.openmetadata.commonservices.repositoryhandler.RepositoryHandler;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.odpi.openmetadata.accessservices.assetlineage.ffdc.AssetLineageErrorCode.ENTITY_NOT_FOUND;
 import static org.odpi.openmetadata.accessservices.assetlineage.ffdc.AssetLineageErrorCode.RELATIONSHIP_NOT_FOUND;
@@ -159,6 +157,9 @@ public class ProcessHandler {
 
         List<EntityDetail> entityDetails = new ArrayList<>();
         for (Relationship relationship : relationships) {
+            log.error("Relationship for vertex with guid {}",startEntity.getGUID());
+
+            log.error("Relationship with guid {} and type {}",relationship.getGUID(),relationship.getType().getTypeDefName());
 
             if(relationship.getType().getTypeDefName().equals(ATTRIBUTE_FOR_SCHEMA) && startEntityType.equals(SCHEMA_ATTRIBUTE)){
                 continue;
