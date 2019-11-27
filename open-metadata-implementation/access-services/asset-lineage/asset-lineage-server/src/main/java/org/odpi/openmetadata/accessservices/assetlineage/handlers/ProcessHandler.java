@@ -157,9 +157,9 @@ public class ProcessHandler {
 
         List<EntityDetail> entityDetails = new ArrayList<>();
         for (Relationship relationship : relationships) {
-            log.error("Relationship for vertex with guid {}",startEntity.getGUID());
+            log.debug("Relationship for vertex with guid {}",startEntity.getGUID());
 
-            log.error("Relationship with guid {} and type {}",relationship.getGUID(),relationship.getType().getTypeDefName());
+            log.debug("Relationship with guid {} and type {}",relationship.getGUID(),relationship.getType().getTypeDefName());
 
             if(relationship.getType().getTypeDefName().equals(ATTRIBUTE_FOR_SCHEMA) && startEntityType.equals(SCHEMA_ATTRIBUTE)){
                 continue;
