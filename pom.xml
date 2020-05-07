@@ -107,6 +107,7 @@
         <module>open-metadata-publication</module>
         <module>open-metadata-resources</module>
         <module>open-metadata-test</module>
+        <module>open-metadata-implementation/adapters/open-connectors/graph-connector</module>
 
     </modules>
 

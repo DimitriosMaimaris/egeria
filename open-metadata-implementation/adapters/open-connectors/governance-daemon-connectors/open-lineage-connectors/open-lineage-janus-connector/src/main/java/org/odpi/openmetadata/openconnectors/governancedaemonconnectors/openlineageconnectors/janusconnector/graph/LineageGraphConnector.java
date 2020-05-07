@@ -18,6 +18,7 @@ import org.odpi.openmetadata.governanceservers.openlineage.graph.LineageGraphCon
 import org.odpi.openmetadata.governanceservers.openlineage.model.LineageVerticesAndEdges;
 import org.odpi.openmetadata.governanceservers.openlineage.model.Scope;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.LineageResponse;
+import org.odpi.openmetadata.graphconnector.JanusGraphEmbedded;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.factory.GraphFactory;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.JanusConnectorErrorCode;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.ffdc.JanusConnectorException;
@@ -79,6 +80,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
     private JanusGraph lineageGraph;
     private GraphVertexMapper graphVertexMapper = new GraphVertexMapper();
     private LineageGraphConnectorHelper helper;
+    private GraphTraversalSource g;
 
     /**
      * Instantiates the graph based on the configuration passed.
@@ -88,17 +90,30 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
         GraphFactory graphFactory = new GraphFactory();
 
         try {
-            this.lineageGraph = graphFactory.openGraph(connectionProperties);
-        } catch (JanusConnectorException error) {
-            log.error("The Lineage graph could not be initialized due to an error", error);
-            throw new OpenLineageException(500,
-                    error.getReportingClassName(),
-                    error.getReportingActionDescription(),
-                    error.getReportedErrorMessage(),
-                    error.getReportedSystemAction(),
-                    error.getReportedUserAction()
-            );
+            String graphType = connectionProperties.getConfigurationProperties().get("graphType").toString();
+            connectionProperties.getConfigurationProperties().remove("graphType");
+
+            if ("embeddedJanus".equals(graphType)) {
+                JanusGraphEmbedded janusGraphEmbedded = new JanusGraphEmbedded(connectionProperties);
+                g = janusGraphEmbedded.openGraph();
+                this.lineageGraph = janusGraphEmbedded.getJanusGraph();
+                System.out.println(g.V().count().next());
+            }
+
+        }catch (Exception e){
+            log.debug("exception ",e);
         }
+//            this.lineageGraph = graphFactory.openGraph(connectionProperties);
+//        } catch (JanusConnectorException error) {
+//            log.error("The Lineage graph could not be initialized due to an error", error);
+//            throw new OpenLineageException(500,
+//                    error.getReportingClassName(),
+//                    error.getReportingActionDescription(),
+//                    error.getReportedErrorMessage(),
+//                    error.getReportedSystemAction(),
+//                    error.getReportedUserAction()
+//            );
+//        }
         this.helper = new LineageGraphConnectorHelper(lineageGraph);
     }
 
