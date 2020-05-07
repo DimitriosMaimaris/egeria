@@ -19,7 +19,6 @@ import org.odpi.openmetadata.governanceservers.openlineage.model.LineageVertices
 import org.odpi.openmetadata.governanceservers.openlineage.model.Scope;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.LineageResponse;
 import org.odpi.openmetadata.graphconnector.JanusGraphEmbedded;
-import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.factory.GraphFactory;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.JanusConnectorErrorCode;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.ffdc.JanusConnectorException;
 import org.slf4j.Logger;
@@ -87,7 +86,6 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
      *
      */
     public void initializeGraphDB() throws OpenLineageException {
-        GraphFactory graphFactory = new GraphFactory();
 
         try {
             String graphType = connectionProperties.getConfigurationProperties().get("graphType").toString();
