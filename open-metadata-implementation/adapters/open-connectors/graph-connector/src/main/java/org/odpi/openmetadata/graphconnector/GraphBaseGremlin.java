@@ -17,7 +17,7 @@ public abstract class GraphBaseGremlin {
 
     protected Graph graph;
     protected GraphTraversalSource g;
-    protected boolean supportsTransactions;
+    protected boolean supportingTransactions;
     protected boolean isRemote;
     protected Map<String,Object> properties;
 
@@ -142,4 +142,8 @@ public abstract class GraphBaseGremlin {
 //        }
 //    }
 
+
+    public boolean isSupportingTransactions() {
+        return supportingTransactions;
+    }
 }

@@ -2,7 +2,6 @@
 /* Copyright Contributors to the ODPi Egeria project. */
 package org.odpi.openmetadata.graphconnector;
 
-import org.apache.tinkerpop.gremlin.driver.ResultSet;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -37,19 +36,18 @@ public class JanusGraphEmbedded extends GraphBaseGremlin {
     protected boolean useMixedIndex;
     protected String mixedIndexConfigName;
     private JanusGraph janusGraph;
-    private IndexingFactory indexingFactory;
+//    private IndexingFactory indexingFactory;
 
     public JanusGraphEmbedded(ConnectionProperties connectionProperties){
         super(connectionProperties);
-        this.supportsTransactions = true;
-        IndexingFactory indexingFactory  = new IndexingFactory();
+        this.supportingTransactions = true;
+//        indexingFactory  = new IndexingFactory();
 
     }
 
     @Override
     public GraphTraversalSource openGraph(){
         super.openGraph();
-//        useMixedIndex = useMixedIndex && conf.containsKey("index." + mixedIndexConfigName + ".backend");
         janusGraph = getJanusGraph();
         createSchema();
         return g;
@@ -57,13 +55,6 @@ public class JanusGraphEmbedded extends GraphBaseGremlin {
 
     @Override
     protected void createSchema(){
-
-//        if(isRemote){
-//            String req = schemaRequest();
-//            final ResultSet resultSet = client.submit(req);
-//
-//        }
-//        else {
 
             final String methodName = "initializeGraph";
             log.info("Updating graph schema, if necessary");
@@ -80,7 +71,7 @@ public class JanusGraphEmbedded extends GraphBaseGremlin {
 
                 createIndexes();
             } catch (Exception e) {
-                log.error("{} failed  during graph schema creation operation with error: {}", e);
+                log.error("failed  during graph schema creation operation with error: ", e);
 //            JanusConnectorErrorCode errorCode = JanusConnectorErrorCode.GRAPH_INITIALIZATION_ERROR;
 //            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(e.getMessage(), methodName, GraphFactory.class.getName());
 //            throw new JanusConnectorException(GraphFactory.class.getName(),
@@ -135,6 +126,7 @@ public class JanusGraphEmbedded extends GraphBaseGremlin {
      * Set up the indexes for the Janus Graph instance
      **/
     private void createIndexes() {
+        IndexingFactory indexingFactory = new IndexingFactory();
         indexingFactory.createCompositeIndexForProperty(PROPERTY_NAME_GUID, PROPERTY_KEY_ENTITY_GUID, true, janusGraph, Vertex.class);
         indexingFactory.createCompositeIndexForProperty(PROPERTY_NAME_LABEL, PROPERTY_KEY_LABEL, false, janusGraph, Vertex.class);
         indexingFactory.createCompositeIndexForProperty(PROPERTY_NAME_VERSION, PROPERTY_KEY_ENTITY_VERSION, false, janusGraph, Vertex.class);

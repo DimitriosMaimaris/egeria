@@ -37,7 +37,6 @@ public class JanusGraphRemote extends JanusGraphEmbedded {
 
     @Override
     public GraphTraversalSource openGraph(){
-//        super.openGraph();
         return traversal().withRemote(DriverRemoteConnection.using(cluster(),"g"));
     }
 
@@ -48,7 +47,7 @@ public class JanusGraphRemote extends JanusGraphEmbedded {
         // get the schema request as a string
         final String req = schemaRequest();
         // submit the request to the server
-        final ResultSet resultSet = client.submit(req);
+        client.submit(req);
     }
 
     public Cluster cluster() {
