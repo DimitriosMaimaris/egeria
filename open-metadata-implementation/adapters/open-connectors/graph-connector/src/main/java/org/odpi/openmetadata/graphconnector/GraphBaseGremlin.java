@@ -5,28 +5,30 @@ package org.odpi.openmetadata.graphconnector;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
-import org.janusgraph.core.JanusGraphConfigurationException;
 import org.odpi.openmetadata.frameworks.connectors.properties.ConnectionProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public abstract class GraphBaseImpl {
+public abstract class GraphBaseGremlin {
 
-    private static final Logger log = LoggerFactory.getLogger(GraphBaseImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GraphBaseGremlin.class);
 
     protected Graph graph;
     protected GraphTraversalSource g;
     protected boolean supportsTransactions;
+    protected boolean isRemote;
     protected Map<String,Object> properties;
-    public GraphBaseImpl(){}
+
+
+    public GraphBaseGremlin(){}
 
     /**
      * Constructs a graph using the given properties.
      * @param connectionProperties the properties coming from the request
      */
-    public GraphBaseImpl(ConnectionProperties connectionProperties){
+    public GraphBaseGremlin(ConnectionProperties connectionProperties){
         this.properties = connectionProperties.getConfigurationProperties();
     }
 

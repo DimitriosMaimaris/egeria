@@ -2,6 +2,7 @@
 /* Copyright Contributors to the ODPi Egeria project. */
 package org.odpi.openmetadata.graphconnector;
 
+import org.apache.tinkerpop.gremlin.driver.ResultSet;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 
 import static org.odpi.openmetadata.graphconnector.utils.GraphConstants.*;
 
-public class JanusGraphEmbedded extends GraphBaseImpl {
+public class JanusGraphEmbedded extends GraphBaseGremlin {
 
     private static final Logger log = LoggerFactory.getLogger(JanusGraphEmbedded.class);
 
@@ -57,22 +58,29 @@ public class JanusGraphEmbedded extends GraphBaseImpl {
     @Override
     protected void createSchema(){
 
-        final String methodName = "initializeGraph";
-        log.info("Updating graph schema, if necessary");
-        try {
-            JanusGraphManagement management = janusGraph.openManagement();
+//        if(isRemote){
+//            String req = schemaRequest();
+//            final ResultSet resultSet = client.submit(req);
+//
+//        }
+//        else {
 
-            Set<String> vertexLabels = schemaBasedOnGraphType(VertexLabelsLineageGraph.class);
-            Set<String> relationshipsLabels = schemaBasedOnGraphType(EdgeLabelsLineageGraph.class);
+            final String methodName = "initializeGraph";
+            log.info("Updating graph schema, if necessary");
+            try {
+                JanusGraphManagement management = janusGraph.openManagement();
 
-            checkAndAddLabelVertex(management, vertexLabels);
-            checkAndAddLabelEdge(management, relationshipsLabels);
+                Set<String> vertexLabels = schemaBasedOnGraphType(VertexLabelsLineageGraph.class);
+                Set<String> relationshipsLabels = schemaBasedOnGraphType(EdgeLabelsLineageGraph.class);
 
-            management.commit();
+                checkAndAddLabelVertex(management, vertexLabels);
+                checkAndAddLabelEdge(management, relationshipsLabels);
 
-            createIndexes();
-        } catch (Exception e) {
-            log.error("{} failed  during graph schema creation operation with error: {}", e);
+                management.commit();
+
+                createIndexes();
+            } catch (Exception e) {
+                log.error("{} failed  during graph schema creation operation with error: {}", e);
 //            JanusConnectorErrorCode errorCode = JanusConnectorErrorCode.GRAPH_INITIALIZATION_ERROR;
 //            String errorMessage = errorCode.getErrorMessageId() + errorCode.getFormattedErrorMessage(e.getMessage(), methodName, GraphFactory.class.getName());
 //            throw new JanusConnectorException(GraphFactory.class.getName(),
@@ -80,7 +88,8 @@ public class JanusGraphEmbedded extends GraphBaseImpl {
 //                    errorMessage,
 //                    errorCode.getSystemAction(),
 //                    errorCode.getUserAction());
-        }
+            }
+//        }
     }
 
     /**
@@ -133,4 +142,5 @@ public class JanusGraphEmbedded extends GraphBaseImpl {
         indexingFactory.createCompositeIndexForProperty(PROPERTY_NAME_LABEL, PROPERTY_KEY_RELATIONSHIP_LABEL, false, janusGraph, Edge.class);
         indexingFactory.createCompositeIndexForProperty(PROPERTY_NAME_GUID, PROPERTY_KEY_RELATIONSHIP_GUID, false, janusGraph, Edge.class);
     }
+
 }

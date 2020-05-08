@@ -19,6 +19,7 @@ import org.odpi.openmetadata.governanceservers.openlineage.model.LineageVertices
 import org.odpi.openmetadata.governanceservers.openlineage.model.Scope;
 import org.odpi.openmetadata.governanceservers.openlineage.responses.LineageResponse;
 import org.odpi.openmetadata.graphconnector.JanusGraphEmbedded;
+import org.odpi.openmetadata.graphconnector.JanusGraphRemote;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.JanusConnectorErrorCode;
 import org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.model.ffdc.JanusConnectorException;
 import org.slf4j.Logger;
@@ -95,6 +96,13 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
                 JanusGraphEmbedded janusGraphEmbedded = new JanusGraphEmbedded(connectionProperties);
                 g = janusGraphEmbedded.openGraph();
                 this.lineageGraph = janusGraphEmbedded.getJanusGraph();
+                System.out.println(g.V().count().next());
+            }
+
+            if ("remoteJanus".equals(graphType)){
+                JanusGraphRemote janusGraphRemote = new JanusGraphRemote(connectionProperties);
+                g = janusGraphRemote.openGraph();
+                this.lineageGraph = janusGraphRemote.getJanusGraph();
                 System.out.println(g.V().count().next());
             }
 
