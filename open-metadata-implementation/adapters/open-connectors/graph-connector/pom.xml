@@ -7,8 +7,7 @@
     <parent>
         <artifactId>egeria</artifactId>
         <groupId>org.odpi.egeria</groupId>
-        <version>1.7-SNAPSHOT</version>
-        <relativePath>../../../../pom.xml</relativePath>
+        <version>1.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,20 +15,25 @@
 
     <dependencies>
 
-    <dependency>
-        <groupId>org.janusgraph</groupId>
-        <artifactId>janusgraph-core</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.tinkerpop</groupId>
             <artifactId>gremlin-driver</artifactId>
         </dependency>
 
-    <dependency>
-        <groupId>org.apache.tinkerpop</groupId>
-        <artifactId>gremlin-core</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-driver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tinkerpop</groupId>
+            <artifactId>gremlin-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.odpi.egeria</groupId>
             <artifactId>open-connector-framework</artifactId>

@@ -42,6 +42,7 @@
         <module>configuration-store-connectors</module>
         <module>rest-client-connectors</module>
         <module>connector-configuration-factory</module>
+        <module>graph-connector</module>
     </modules>
 
 </project>

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.bothE;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.hasLabel;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.inV;
+import static org.odpi.openmetadata.graphconnector.utils.GraphConstants.EDGE_LABEL_SEMANTIC;
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.ASSET_SCHEMA_TYPE;
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.ATTRIBUTE_FOR_SCHEMA;
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.DATA_FILE;
@@ -48,31 +49,9 @@ import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.op
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.PROCESS;
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.PROCESS_PORT;
 import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.Constants.RELATIONAL_TABLE;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.EDGE_LABEL_DATAFLOW_WITH_PROCESS;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.EDGE_LABEL_INCLUDED_IN;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.EDGE_LABEL_SEMANTIC;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.NODE_LABEL_SUB_PROCESS;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_DISPLAY_NAME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_CREATED_BY;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_CREATE_TIME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_GUID;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_NODE_ID;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_UPDATED_BY;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_UPDATE_TIME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_ENTITY_VERSION;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_INSTANCEPROP_DISPLAY_NAME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_LABEL;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_METADATA_ID;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_PREFIX_ELEMENT;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_PREFIX_INSTANCE_PROPERTY;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_CREATED_BY;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_CREATE_TIME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_DISPLAY_NAME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_GUID;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_UPDATED_BY;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_UPDATE_TIME;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_KEY_RELATIONSHIP_VERSION;
-import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.PROPERTY_NAME_PORT_TYPE;
+import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.*;
+//import static org.odpi.openmetadata.openconnectors.governancedaemonconnectors.openlineageconnectors.janusconnector.utils.GraphConstants.EDGE_LABEL_SEMANTIC;
+
 
 public class LineageGraphConnector extends LineageGraphConnectorBase {
 
@@ -448,7 +427,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
     }
 
     @Override
-    public void deleteEntity(String guid,String version){
+    public void deleteEntity(String guid,Object version){
 //        GraphTraversalSource g = lineageGraph.traversal();
 
         Iterator<Vertex> vertex = checkIfVertexExist(g,guid,version);
@@ -466,6 +445,22 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
             g.tx().commit();
         }
         log.debug("Vertex with guid {} deleted",guid);
+    }
+
+    @Override
+    public void deleteRelationship(String guid){
+        GraphTraversalSource g = lineageGraph.traversal();
+
+        Iterator<Edge> edge = g.E().has(PROPERTY_KEY_RELATIONSHIP_GUID,guid);
+        if(!edge.hasNext()){
+            g.tx().rollback();
+            log.debug("Edge with guid did not delete {}",guid);
+            return;
+        }
+
+        g.E(edge.next().id()).drop();
+        g.tx().commit();
+        log.debug("Edge with guid {} deleted",guid);
     }
 
     /**
@@ -599,7 +594,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
         }
     }
 
-    private Iterator<Vertex> checkIfVertexExist(GraphTraversalSource g, String guid, String version){
+    private Iterator<Vertex> checkIfVertexExist(GraphTraversalSource g, String guid, Object version){
 
         return g.V().has(PROPERTY_KEY_ENTITY_GUID,guid).has(PROPERTY_KEY_ENTITY_VERSION,version);
     }
@@ -628,7 +623,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
     public LineageResponse lineage(Scope scope, String guid, String displayNameMustContain, boolean includeProcesses) throws OpenLineageException {
         String methodName = "lineage";
 
-//        GraphTraversalSource g = lineageGraph.traversal();
+        GraphTraversalSource g = lineageGraph.traversal();
         try {
             g.V().has(PROPERTY_KEY_ENTITY_GUID, guid).next();
         } catch (NoSuchElementException e) {
@@ -642,13 +637,8 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
                     errorCode.getUserAction());
         }
 
-        List<String> edgeLabels = Arrays.asList(EDGE_LABEL_SEMANTIC, EDGE_LABEL_DATAFLOW_WITH_PROCESS);
+        List<String> edgeLabels = Arrays.asList(EDGE_LABEL_SEMANTIC_ASSIGNMENT, EDGE_LABEL_DATAFLOW_WITH_PROCESS);
 
-        //TODO modify query for end to end not to include processes -  check if it's possible to do this without the need of
-        // DataFlowWithoutProcess edges - which are not created anymore
-//        List<String> edgeLabels = new ArrayList<>();
-//        edgeLabels.add(EDGE_LABEL_SEMANTIC);
-//        edgeLabels.add(includeProcesses ? EDGE_LABEL_DATAFLOW_WITH_PROCESS : EDGE_LABEL_DATAFLOW_WITHOUT_PROCESS);
         LineageVerticesAndEdges lineageVerticesAndEdges = null;
 
         String[] edgeLabelsArray = edgeLabels.toArray(new String[0]);
@@ -657,7 +647,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
                 lineageVerticesAndEdges = helper.sourceAndDestination(guid, edgeLabelsArray);
                 break;
             case END_TO_END:
-                lineageVerticesAndEdges = helper.endToEnd(guid, edgeLabelsArray);
+                lineageVerticesAndEdges = helper.endToEnd(guid, includeProcesses, edgeLabelsArray);
                 break;
             case ULTIMATE_SOURCE:
                 lineageVerticesAndEdges = helper.ultimateSource(guid, edgeLabelsArray);
@@ -666,7 +656,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
                 lineageVerticesAndEdges = helper.ultimateDestination(guid, edgeLabelsArray);
                 break;
             case GLOSSARY:
-                lineageVerticesAndEdges = helper.glossary(guid);
+                lineageVerticesAndEdges = helper.glossary(guid, includeProcesses);
                 break;
         }
         if (!displayNameMustContain.isEmpty())
