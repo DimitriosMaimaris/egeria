@@ -59,30 +59,17 @@
       openLineageDescription: Open Lineage Service is used for the storage and querying of lineage
       inTopicName: "{{ config.value.assetlineage_topic }}"
       openLineageWiki: wiki URL
-      openLineageBufferGraphConnection:
+      lineageGraphConnection:
         class: Connection
-        displayName: Buffer Graph Connection
+        displayName: Lineage Graph Connection
         description: Used for storing lineage in the Open Metadata format
         connectorType:
           class: ConnectorType
-          connectorProviderClassName: "{{ config.value.buffergraph_provider }}"
+          connectorProviderClassName: "{{ config.value.lineage_graph_provider }}"
         configurationProperties:
-          graphDB: "{{ config.value.buffergraph_db }}"
-          graphType: bufferGraph
-          storageBackend: "{{ config.value.buffergraph_storage }}"
-          indexSearchBackend: "{{ config.value.buffergraph_index }}"
-      openLineageMainGraphConnection:
-        class: Connection
-        displayName: Main Graph Connection
-        description: Used for storing lineage in a fomat optimized for querying lineage
-        connectorType:
-          class: ConnectorType
-          connectorProviderClassName: "{{ config.value.maingraph_provider }}"
-        configurationProperties:
-          graphDB: "{{ config.value.maingraph_db }}"
-          graphType: mainGraph
-          storageBackend: "{{ config.value.maingraph_storage }}"
-          indexSearchBackend: "{{ config.value.maingraph_index }}"
+          graphDB: "{{ config.value.lineage_graph_db }}"
+          storageBackend: "{{ config.value.lineage_graph_storage }}"
+          indexSearchBackend: "{{ config.value.lineage_graph_index }}"
   when: config.value.mode == 'open-lineage-service'
 
 - name: "{{ config.key }} data engine proxy service connectivity"
@@ -108,3 +95,14 @@
         configurationProperties: "{{ config.value.configuration_properties }}"
       pollIntervalInSeconds: "{{ config.value.pool_interval_seconds }}"
   when: config.value.mode == 'data-engine-proxy-service'
+
+- name: "{{ config.key }} set auditlog"
+  uri:
+    url: "{{ server_base_url }}/audit-log-destinations/{{ config.value.auditlog_destination }}"
+    method: POST
+    body_format: json
+    body: "{{ config.value.auditlog_severity }}"
+    headers:
+      Content-Type: application/json
+    validate_certs: no
+  when: "config.value.auditlog_destination is defined"
