@@ -125,21 +125,21 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
 
     @Override
     public void schedulerTask(){
-        GraphTraversalSource g = lineageGraph.traversal();
-        try {
-            List<Vertex> vertices = g.V().has(PROPERTY_KEY_LABEL, PROCESS).toList();
-            List<String> guidList = vertices.stream().map(v -> (String) v.property(PROPERTY_KEY_ENTITY_GUID).value()).collect(Collectors.toList());
-
-            guidList.forEach(process -> findInputColumns(g,process));
-            if (supportingTransactions){
-                g.tx().commit();
-            }
-        }catch (Exception e){
-            log.error("Something went wrong when trying to map a process. The error is: ",e);
-            if (supportingTransactions) {
-                g.tx().rollback();
-            }
-        }
+//        GraphTraversalSource g = lineageGraph.traversal();
+//        try {
+//            List<Vertex> vertices = g.V().has(PROPERTY_KEY_LABEL, PROCESS).toList();
+//            List<String> guidList = vertices.stream().map(v -> (String) v.property(PROPERTY_KEY_ENTITY_GUID).value()).collect(Collectors.toList());
+//
+//            guidList.forEach(process -> findInputColumns(g,process));
+//            if (supportingTransactions){
+//                g.tx().commit();
+//            }
+//        }catch (Exception e){
+//            log.error("Something went wrong when trying to map a process. The error is: ",e);
+//            if (supportingTransactions) {
+//                g.tx().rollback();
+//            }
+//        }
     }
 
     /**
@@ -231,7 +231,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
      */
     private void addNodesAndEdgesForQuerying(Vertex columnIn,Vertex columnOut,Vertex process){
 
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
 
         final String processGuid = process.property(PROPERTY_KEY_ENTITY_GUID).value().toString();
         final String processName = process.property(PROPERTY_KEY_INSTANCEPROP_DISPLAY_NAME).value().toString();
@@ -286,7 +286,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
     @Override
     public void storeToGraph(Set<GraphContext> graphContext){
 
-        GraphTraversalSource g =  lineageGraph.traversal();
+//        GraphTraversalSource g =  lineageGraph.traversal();
         graphContext.forEach(entry -> {
             try {
                 addVerticesAndRelationship(g, entry);
@@ -327,8 +327,13 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
         Vertex vertex;
         if(!vertexIt.hasNext()){
 
-            vertex = g.addV(lineageEntity.getTypeDefName()).next();
-            addPropertiesToVertex(g,vertex,lineageEntity);
+            vertex = g.addV(lineageEntity.getTypeDefName())
+//            addPropertiesToVertex(g,vertex,lineageEntity);
+            //test
+            .property(PROPERTY_KEY_ENTITY_GUID, lineageEntity.getGuid())
+            .property(PROPERTY_KEY_LABEL, lineageEntity.getTypeDefName())
+            .property(PROPERTY_KEY_ENTITY_VERSION, lineageEntity.getVersion()).next();
+
             if (supportingTransactions){
                 g.tx().commit();
             }
@@ -353,7 +358,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
      */
     private void addRelationship(String relationshipGuid,String relationshipType,Vertex fromVertex,Vertex toVertex) throws JanusConnectorException{
         String methodName = "addRelationship";
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
 
         if (relationshipType == null) {
             log.debug("Relationship type name is missing, relationship cannot be created");
@@ -363,12 +368,14 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
         try {
             Iterator<Edge> edgeIt = g.E().has(PROPERTY_KEY_RELATIONSHIP_GUID, relationshipGuid);
             if (edgeIt.hasNext()) {
-                g.tx().rollback();
+                if(supportingTransactions) {
+                    g.tx().rollback();
+                }
                 log.debug("found existing edge {} when trying to add a relationship", edgeIt);
                 return;
             }
 
-            fromVertex.addEdge(relationshipType, toVertex).property(PROPERTY_KEY_RELATIONSHIP_GUID,relationshipGuid);
+            g.V(fromVertex.id()).addE(relationshipType).to(g.V(toVertex.id())).property(PROPERTY_KEY_RELATIONSHIP_GUID,relationshipGuid).next();
             if (supportingTransactions){
                 g.tx().commit();
             }
@@ -408,7 +415,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
      */
     @Override
     public void updateEntity(LineageEntity lineageEntity){
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
 
         Iterator<Vertex> vertex = g.V().has(PROPERTY_KEY_ENTITY_GUID,lineageEntity.getGuid());
         if(!vertex.hasNext()){
@@ -427,7 +434,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
      */
     @Override
     public void updateRelationship(LineageRelationship lineageRelationship){
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
 
         Iterator<Edge> edge = g.E().has(PROPERTY_KEY_RELATIONSHIP_GUID,lineageRelationship.getGuid());
         if(!edge.hasNext()){
@@ -442,7 +449,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
 
     @Override
     public void deleteEntity(String guid,String version){
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
 
         Iterator<Vertex> vertex = checkIfVertexExist(g,guid,version);
         //TODO add check when we will have classifications to delete classifications first
@@ -621,7 +628,7 @@ public class LineageGraphConnector extends LineageGraphConnectorBase {
     public LineageResponse lineage(Scope scope, String guid, String displayNameMustContain, boolean includeProcesses) throws OpenLineageException {
         String methodName = "lineage";
 
-        GraphTraversalSource g = lineageGraph.traversal();
+//        GraphTraversalSource g = lineageGraph.traversal();
         try {
             g.V().has(PROPERTY_KEY_ENTITY_GUID, guid).next();
         } catch (NoSuchElementException e) {
